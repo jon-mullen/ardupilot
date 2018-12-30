@@ -50,42 +50,6 @@ static void handle_no_commands()
 }
 
 /********************************************************************************/
-// Verify command Handlers
-/********************************************************************************/
-
-static bool verify_nav_command()	// Returns true if command complete
-{
-	switch(nav_command_ID) {
-
-		default:
-			gcs_send_text_P(SEVERITY_HIGH,PSTR("verify_nav: Invalid or no current Nav cmd"));
-			return false;
-	}
-}
-
-static bool verify_condition_command()		// Returns true if command complete
-{
-	switch(non_nav_command_ID) {
-    case NO_COMMAND:
-        break;
-
-    case MAV_CMD_CONDITION_DELAY:
-        return verify_wait_delay();
-        break;
-        
-    case WAIT_COMMAND:
-        return 0;
-        break;
-        
-
-    default:
-        gcs_send_text_P(SEVERITY_HIGH,PSTR("verify_conditon: Invalid or no current Condition cmd"));
-        break;
-	}
-    return false;
-}
-
-/********************************************************************************/
 //  Condition (May) commands
 /********************************************************************************/
 
@@ -93,19 +57,6 @@ static void do_wait_delay()
 {
 	condition_start = millis();
 	condition_value  = next_nonnav_command.lat * 1000;	// convert to milliseconds
-}
-
-/********************************************************************************/
-// Verify Condition (May) commands
-/********************************************************************************/
-
-static bool verify_wait_delay()
-{
-	if ((uint32_t)(millis() - condition_start) > (uint32_t)condition_value){
-		condition_value 	= 0;
-		return true;
-	}
-	return false;
 }
 
 /********************************************************************************/

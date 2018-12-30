@@ -32,18 +32,6 @@ static void update_commands(void)
 	}									// Other (eg GCS_Auto) modes may be implemented here
 }
 
-static void verify_commands(void)
-{
-	if(verify_nav_command()){
-		nav_command_ID = NO_COMMAND;
-	}
-
-	if(verify_condition_command()){
-		non_nav_command_ID = NO_COMMAND;
-	}
-}
-
-
 static void process_next_command()
 {
 	// This function makes sure that we always have a current navigation command

@@ -542,6 +542,8 @@ static void reboot_apm(void)
  */
 static uint8_t check_digital_pin(uint8_t pin)
 {
+
+    // JTM_TODO: this is orphaned, repurpose
     int8_t dpin = hal.gpio->analogPinToDigitalPin(pin);
     if (dpin == -1) {
         return 0;

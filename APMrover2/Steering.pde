@@ -1,52 +1,5 @@
 // -*- tab-width: 4; Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
-/*
-  check for triggering of start of auto mode
- */
-static bool auto_check_trigger(void)
-{
-    // only applies to AUTO mode
-    if (control_mode != AUTO) {
-        return true;
-    }
-
-    // check for user pressing the auto trigger to off
-    if (auto_triggered && g.auto_trigger_pin != -1 && check_digital_pin(g.auto_trigger_pin) == 1) {
-        gcs_send_text_P(SEVERITY_LOW, PSTR("AUTO triggered off"));
-        auto_triggered = false;
-        return false; 
-    }
-
-    // if already triggered, then return true, so you don't
-    // need to hold the switch down
-    if (auto_triggered) {
-        return true;
-    }
-
-    if (g.auto_trigger_pin == -1 && g.auto_kickstart == 0.0f) {
-        // no trigger configured - let's go!
-        auto_triggered = true;
-        return true;
-    }
- 
-    if (g.auto_trigger_pin != -1 && check_digital_pin(g.auto_trigger_pin) == 0) {
-        gcs_send_text_P(SEVERITY_LOW, PSTR("Triggered AUTO with pin"));
-        auto_triggered = true;
-        return true;            
-    }
-
-    if (g.auto_kickstart != 0.0f) {
-        float xaccel = ins.get_accel().x;
-        if (xaccel >= g.auto_kickstart) {
-            gcs_send_text_fmt(PSTR("Triggered AUTO xaccel=%.1f"), xaccel);
-            auto_triggered = true;
-            return true;            
-        }
-    }
-
-    return false;   
-}
-
 /*****************************************
 * Set the flight control servos based on the current calculated values
 *****************************************/
