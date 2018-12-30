@@ -67,20 +67,22 @@ LIBOBJS			:=	$(SKETCHLIBOBJS)
 
 # Find the hardware directory to use
 HARDWARE_DIR		:=	$(firstword $(wildcard $(SKETCHBOOK)/hardware/$(HARDWARE) \
-							$(ARDUINO)/hardware/$(HARDWARE)))
+							$(ARDUINO)/hardware/$(HARDWARE)/avr))
 ifeq ($(HARDWARE_DIR),)
 $(error ERROR: hardware directory for $(HARDWARE) not found)
 endif
 
 # Find the boards.txt that we are using
 BOARDFILE		:=	$(wildcard $(HARDWARE_DIR)/boards.txt)
+$(info Using HARDWARE=$(HARDWARE), HARDWARE_DIR=$(HARDWARE_DIR))
 ifeq ($(BOARDFILE),)
 $(error ERROR: could not locate boards.txt for hardware $(HARDWARE))
 endif
 
 # Extract needed build parameters from the boardfile
 MCU			:=	$(shell grep $(BOARD).build.mcu $(BOARDFILE) | cut -d = -f 2)
-F_CPU		:=	$(shell grep $(BOARD).build.f_cpu $(BOARDFILE) | cut -d = -f 2)
+F_CPU		:=	16000000L # $(shell grep $(BOARD).build.f_cpu $(BOARDFILE) | cut -d = -f 2)
+$(info BOARD=$(BOARD))
 HARDWARE_CORE :=	$(shell grep $(BOARD).build.core $(BOARDFILE) | cut -d = -f 2)
 UPLOAD_SPEED :=	$(shell grep $(BOARD).upload.speed $(BOARDFILE) | cut -d = -f 2)
 

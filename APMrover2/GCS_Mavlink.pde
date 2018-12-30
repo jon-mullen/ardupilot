@@ -1704,40 +1704,6 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
 		}
 #endif // HIL_MODE
 
-#if CAMERA == ENABLED
-    case MAVLINK_MSG_ID_DIGICAM_CONFIGURE:
-    {
-        camera.configure_msg(msg);
-        break;
-    }
-
-    case MAVLINK_MSG_ID_DIGICAM_CONTROL:
-    {
-        camera.control_msg(msg);
-        break;
-    }
-#endif // CAMERA == ENABLED
-
-#if MOUNT == ENABLED
-    case MAVLINK_MSG_ID_MOUNT_CONFIGURE:
-		{
-			camera_mount.configure_msg(msg);
-			break;
-		}
-
-    case MAVLINK_MSG_ID_MOUNT_CONTROL:
-		{
-			camera_mount.control_msg(msg);
-			break;
-		}
-
-    case MAVLINK_MSG_ID_MOUNT_STATUS:
-		{
-			camera_mount.status_msg(msg);
-			break;
-		}
-#endif // MOUNT == ENABLED
-
     case MAVLINK_MSG_ID_RADIO:
         {
             mavlink_radio_t packet;

@@ -483,18 +483,6 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Path: ../libraries/AP_AHRS/AP_AHRS.cpp
     GOBJECT(ahrs,                   "AHRS_",    AP_AHRS),
 
-#if CAMERA == ENABLED
-    // @Group: CAM_
-    // @Path: ../libraries/AP_Camera/AP_Camera.cpp
-    GOBJECT(camera,                  "CAM_", AP_Camera),
-#endif
-
-#if MOUNT == ENABLED
-    // @Group: MNT_
-    // @Path: ../libraries/AP_Mount/AP_Mount.cpp
-    GOBJECT(camera_mount,           "MNT_", AP_Mount),
-#endif
-
 	AP_VAREND
 };
 

@@ -68,8 +68,6 @@ version 2.1 of the License, or (at your option) any later version.
 #include <ModeFilter.h>		// Mode Filter from Filter library
 #include <AverageFilter.h>	// Mode Filter from Filter library
 #include <AP_Relay.h>       // APM relay
-#include <AP_Mount.h>		// Camera/Antenna mount
-#include <AP_Camera.h>		// Camera triggering
 #include <GCS_MAVLink.h>    // MAVLink GCS definitions
 #include <AP_Airspeed.h>    // needed for AHRS build
 #include <memcheck.h>
@@ -258,22 +256,8 @@ static AP_RangeFinder_analog sonar2;
 // relay support
 AP_Relay relay;
 
-// Camera
-#if CAMERA == ENABLED
-static AP_Camera camera(&relay);
-#endif
-
 // The rover's current location
 static struct 	Location current_loc;
-
-
-// Camera/Antenna mount tracking and stabilisation stuff
-// --------------------------------------
-#if MOUNT == ENABLED
-// current_loc uses the baro/gps soloution for altitude rather than gps only.
-// mabe one could use current_loc for lat/lon too and eliminate g_gps alltogether?
-AP_Mount camera_mount(&current_loc, g_gps, &ahrs, 0);
-#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -568,7 +552,6 @@ static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
     { read_control_switch,   15,   1000 },
     { update_events,         15,   1000 },
     { check_usb_mux,         15,   1000 },
-    { mount_update,           1,    500 },
     { failsafe_check,         5,    500 },
     { compass_accumulate,     1,    900 },
     { one_second_loop,       50,   3000 }
@@ -676,19 +659,6 @@ static void fast_loop()
 }
 
 /*
-  update camera mount - 50Hz
- */
-static void mount_update(void)
-{
-#if MOUNT == ENABLED
-	camera_mount.update_mount_position();
-#endif
-#if CAMERA == ENABLED
-    camera.trigger_pic_cleanup();
-#endif
-}
-
-/*
   check for GCS failsafe - 10Hz
  */
 static void failsafe_check(void)
@@ -752,10 +722,7 @@ static void update_aux(void)
     update_aux_servo_function(&g.rc_5, &g.rc_6, &g.rc_7, &g.rc_8);
 #endif
     enable_aux_servos();
-        
-#if MOUNT == ENABLED
-    camera_mount.update_mount_type();
-#endif
+
 }
 
 /*
@@ -775,10 +742,6 @@ static void one_second_loop(void)
 
     // cope with changes to aux functions
     update_aux();
-
-#if MOUNT == ENABLED
-    camera_mount.update_mount_type();
-#endif
 
     // cope with changes to mavlink system ID
     mavlink_system.sysid = g.sysid_this_mav;
@@ -843,11 +806,6 @@ static void update_GPS(void)
 		}
         ground_speed   = g_gps->ground_speed_cm * 0.01;
 
-#if CAMERA == ENABLED
-        if (camera.update_location(current_loc) == true) {
-            do_take_picture();
-        }
-#endif        
 	}
 }
 
