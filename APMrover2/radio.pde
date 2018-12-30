@@ -59,35 +59,6 @@ static void read_radio()
 		throttle_nudge = 0;
 	}
 
-    if (g.skid_steer_in) {
-        // convert the two radio_in values from skid steering values
-        /*
-          mixing rule:
-          steering = motor1 - motor2
-          throttle = 0.5*(motor1 + motor2)
-          motor1 = throttle + 0.5*steering
-          motor2 = throttle - 0.5*steering
-        */          
-
-        float motor1 = channel_steer->norm_input();
-        float motor2 = channel_throttle->norm_input();
-        float steering_scaled = motor1 - motor2;
-        float throttle_scaled = 0.5f*(motor1 + motor2);
-        int16_t steer = channel_steer->radio_trim;
-        int16_t thr   = channel_throttle->radio_trim;
-        if (steering_scaled > 0.0f) {
-            steer += steering_scaled*(channel_steer->radio_max-channel_steer->radio_trim);
-        } else {
-            steer += steering_scaled*(channel_steer->radio_trim-channel_steer->radio_min);
-        }
-        if (throttle_scaled > 0.0f) {
-            thr += throttle_scaled*(channel_throttle->radio_max-channel_throttle->radio_trim);
-        } else {
-            thr += throttle_scaled*(channel_throttle->radio_trim-channel_throttle->radio_min);
-        }
-        channel_steer->set_pwm(steer);
-        channel_throttle->set_pwm(thr);
-    }
 }
 
 static void control_failsafe(uint16_t pwm)
