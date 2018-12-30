@@ -410,7 +410,6 @@ static void start_logging()
 static void Log_Write_Startup(uint8_t type) {}
 static void Log_Write_Cmd(uint8_t num, const struct Location *wp) {}
 static void Log_Write_Current() {}
-static void Log_Write_Nav_Tuning() {}
 static void Log_Write_Performance() {}
 static int8_t process_logs(uint8_t argc, const Menu::arg *argv) { return 0; }
 static void Log_Write_Control_Tuning() {}
