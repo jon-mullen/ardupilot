@@ -19,7 +19,6 @@ static void init_commands()
     g.command_index.set_and_save(0);
 	nav_command_ID	= NO_COMMAND;
 	non_nav_command_ID	= NO_COMMAND;
-	next_nav_command.id 	= CMD_BLANK;
 }
 
 // Getters
@@ -96,61 +95,6 @@ static void set_cmd_with_index(struct Location temp, int i)
 	hal.storage->write_dword(mem, temp.lng);
 }
 
-/*
-This function stores waypoint commands
-It looks to see what the next command type is and finds the last command.
-*/
-static void set_next_WP(const struct Location *wp)
-{
-	// copy the current WP into the OldWP slot
-	// ---------------------------------------
-	prev_WP = next_WP;
-
-	// Load the next_WP slot
-	// ---------------------
-	next_WP = *wp;
-
-    // are we already past the waypoint? This happens when we jump
-    // waypoints, and it can cause us to skip a waypoint. If we are
-    // past the waypoint when we start on a leg, then use the current
-    // location as the previous waypoint, to prevent immediately
-    // considering the waypoint complete
-    if (location_passed_point(current_loc, prev_WP, next_WP)) {
-        gcs_send_text_P(SEVERITY_LOW, PSTR("Resetting prev_WP"));
-        prev_WP = current_loc;
-    }
-
-	// this is handy for the groundstation
-	wp_totalDistance 	= get_distance(&current_loc, &next_WP);
-	wp_distance 		= wp_totalDistance;
-	target_bearing 		= get_bearing_cd(&current_loc, &next_WP);
-	nav_bearing 		= target_bearing;
-
-	// set a new crosstrack bearing
-	// ----------------------------
-	reset_crosstrack();
-}
-
-static void set_guided_WP(void)
-{
-	// copy the current location into the OldWP slot
-	// ---------------------------------------
-	prev_WP = current_loc;
-
-	// Load the next_WP slot
-	// ---------------------
-	next_WP = guided_WP;
-
-	// this is handy for the groundstation
-	wp_totalDistance 	= get_distance(&current_loc, &next_WP);
-	wp_distance 		= wp_totalDistance;
-	target_bearing 		= get_bearing_cd(&current_loc, &next_WP);
-
-	// set a new crosstrack bearing
-	// ----------------------------
-	reset_crosstrack();
-}
-
 // run this at setup on the ground
 // -------------------------------
 void init_home()
@@ -173,21 +117,12 @@ void init_home()
 	// Save Home to EEPROM - Command 0
 	// -------------------
 	set_cmd_with_index(home, 0);
-
-	// Save prev loc
-	// -------------
-	next_WP = prev_WP = home;
-
-	// Load home for a default guided_WP
-	// -------------
-	guided_WP = home;
 }
 
 static void restart_nav()
 {  
     g.pidNavSteer.reset_I();
     g.pidSpeedThrottle.reset_I();
-    prev_WP = current_loc;
     nav_command_ID = NO_COMMAND;
     nav_command_index = 0;
     process_next_command();

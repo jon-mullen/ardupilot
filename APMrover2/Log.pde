@@ -268,31 +268,6 @@ static void Log_Write_Control_Tuning()
     DataFlash.WriteBlock(&pkt, sizeof(pkt));
 }
 
-struct PACKED log_Nav_Tuning {
-    LOG_PACKET_HEADER;
-    uint16_t yaw;
-    float    wp_distance;
-    uint16_t target_bearing_cd;
-    uint16_t nav_bearing_cd;
-    int16_t  nav_gain_scalar;
-    int8_t   throttle;
-};
-
-// Write a navigation tuning packet. Total length : 18 bytes
-static void Log_Write_Nav_Tuning()
-{
-    struct log_Nav_Tuning pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_NTUN_MSG),
-        yaw                 : (uint16_t)ahrs.yaw_sensor,
-        wp_distance         : wp_distance,
-        target_bearing_cd   : (uint16_t)target_bearing,
-        nav_bearing_cd      : (uint16_t)nav_bearing,
-        nav_gain_scalar     : (int16_t)(nav_gain_scaler*1000),
-        throttle            : (int8_t)(100 * channel_throttle->norm_output())
-    };
-    DataFlash.WriteBlock(&pkt, sizeof(pkt));
-}
-
 struct PACKED log_Attitude {
     LOG_PACKET_HEADER;
     int16_t roll;
@@ -398,8 +373,6 @@ static const struct LogStructure log_structure[] PROGMEM = {
       "STRT", "BB",         "SType,CTot" },
     { LOG_CTUN_MSG, sizeof(log_Control_Tuning),     
       "CTUN", "hcchf",      "Steer,Roll,Pitch,ThrOut,AccY" },
-    { LOG_NTUN_MSG, sizeof(log_Nav_Tuning),         
-      "NTUN", "HfHHhb",     "Yaw,WpDist,TargBrg,NavBrg,NavGain,Thr" },
     { LOG_CURRENT_MSG, sizeof(log_Current),             
       "CURR", "hhhHf",      "Thr,Volt,Curr,Vcc,CurrTot" },
     { LOG_MODE_MSG, sizeof(log_Mode),             

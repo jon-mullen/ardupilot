@@ -338,19 +338,6 @@ const	float radius_of_earth 	= 6378100;	// meters
 // true if we have a position estimate from AHRS
 static bool have_position;
 
-// This is the currently calculated direction to fly.  
-// deg * 100 : 0 to 360
-static int32_t nav_bearing;
-// This is the direction to the next waypoint
-// deg * 100 : 0 to 360
-static int32_t target_bearing;	
-//This is the direction from the last waypoint to the next waypoint 
-// deg * 100 : 0 to 360
-static int32_t crosstrack_bearing;
-// A gain scaler to account for ground speed/headwind/tailwind
-static float	nav_gain_scaler 		= 1.0f;		
-static bool rtl_complete = false;
-
 // There may be two active commands in Auto mode.  
 // This indicates the active navigation command by index number
 static uint8_t	nav_command_index;					
@@ -360,8 +347,6 @@ static uint8_t	non_nav_command_index;
 static uint8_t	nav_command_ID		= NO_COMMAND;	
 static uint8_t	non_nav_command_ID	= NO_COMMAND;	
 
-// ground speed error in m/s
-static float	groundspeed_error;	
 // 0-(throttle_max - throttle_cruise) : throttle nudge in Auto mode using top 1/2 of throttle stick travel
 static int16_t     throttle_nudge = 0;
 
@@ -370,18 +355,6 @@ static uint8_t receiver_rssi;
 
 // the time when the last HEARTBEAT message arrived from a GCS
 static uint32_t last_heartbeat_ms;
-
-// obstacle detection information
-static struct {
-    // have we detected an obstacle?
-    uint8_t detected_count;
-    float turn_angle;
-    uint16_t sonar1_distance_cm;
-    uint16_t sonar2_distance_cm;
-
-    // time when we last detected an obstacle, in milliseconds
-    uint32_t detected_time_ms;
-} obstacle;
 
 // this is set to true when auto has been triggered to start
 static bool auto_triggered;
@@ -392,15 +365,6 @@ static bool auto_triggered;
 // The amount current ground speed is below min ground speed.  meters per second
 static float 	ground_speed = 0;
 static int16_t throttle_last = 0, throttle = 500;
-
-////////////////////////////////////////////////////////////////////////////////
-// Location Errors
-////////////////////////////////////////////////////////////////////////////////
-// Difference between current bearing and desired bearing.  in centi-degrees
-static int32_t bearing_error_cd;
-
-// Distance perpandicular to the course line that we are off trackline.  Meters 
-static float	crosstrack_error;
 
 ////////////////////////////////////////////////////////////////////////////////
 // CH7 control
@@ -423,21 +387,6 @@ static float 	battery_voltage1 	= LOW_VOLTAGE * 1.05;
 static float	current_amps1;
 // Totalized current (Amp-hours) from battery 1
 static float	current_total1;									
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Navigation control variables
-////////////////////////////////////////////////////////////////////////////////
-// The instantaneous desired steering angle.  Hundredths of a degree
-static int32_t nav_steer_cd;
-
-////////////////////////////////////////////////////////////////////////////////
-// Waypoint distances
-////////////////////////////////////////////////////////////////////////////////
-// Distance between rover and next waypoint.  Meters
-static float wp_distance;
-// Distance between previous and next waypoint.  Meters
-static int32_t wp_totalDistance;
 
 ////////////////////////////////////////////////////////////////////////////////
 // repeating event control
@@ -464,8 +413,6 @@ static int32_t 	condition_value;
 // A starting value used to check the status of a conditional command.
 // For example in a delay command the condition_start records that start time for the delay
 static int32_t 	condition_start;
-// A value used in condition commands.  For example the rate at which to change altitude.
-static int16_t 		condition_rate;
 
 ////////////////////////////////////////////////////////////////////////////////
 // 3D Location vectors
@@ -475,13 +422,6 @@ static int16_t 		condition_rate;
 static struct 	Location home;
 // Flag for if we have g_gps lock and have set the home location
 static bool	home_is_set;
-// The location of the previous waypoint.  Used for track following and altitude ramp calculations
-static struct 	Location prev_WP;
-// The location of the current/active waypoint.  Used for track following
-static struct 	Location next_WP;
-// The location of the active waypoint in Guided mode.
-static struct  	Location guided_WP;
-
 // The location structure information from the Nav command being processed
 static struct 	Location next_nav_command;	
 // The location structure information from the Non-Nav command being processed
@@ -535,7 +475,6 @@ static float 			load;
  */
 static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
     { update_GPS,             5,   2500 },
-    { navigate,               5,   1600 },
     { update_compass,         5,   2000 },
     { update_commands,        5,   1000 },
     { update_logging,         5,   1000 },
@@ -628,9 +567,6 @@ static void fast_loop()
 
 	ahrs.update();
 
-	// uses the yaw from the DCM to give more accurate turns
-	calc_bearing_error();
-
     if (g.log_bitmask & MASK_LOG_ATTITUDE_FAST)
         Log_Write_Attitude();
 
@@ -694,9 +630,6 @@ static void update_logging(void)
     
     if (g.log_bitmask & MASK_LOG_CTUN)
         Log_Write_Control_Tuning();
-
-    if (g.log_bitmask & MASK_LOG_NTUN)
-        Log_Write_Nav_Tuning();
 }
 
 
@@ -806,70 +739,19 @@ static void update_current_mode(void)
     case AUTO:
     case RTL:
     case GUIDED:
-        calc_nav_steer();
-        calc_throttle(g.speed_cruise);
         break;
 
     case STEERING:
-        /*
-          in steering mode we control the bearing error, which gives
-          the same type of steering control as auto mode. The throttle
-          controls the target speed, in proportion to the throttle
-         */
-        bearing_error_cd = channel_steer->pwm_to_angle();
-        calc_nav_steer();
-
-        /* we need to reset the I term or it will build up */
-        g.pidNavSteer.reset_I();
-        calc_throttle(channel_throttle->pwm_to_angle() * 0.01 * g.speed_cruise);
         break;
 
     case LEARNING:
     case MANUAL:
-        /*
-          in both MANUAL and LEARNING we pass through the
-          controls. Setting servo_out here actually doesn't matter, as
-          we set the exact value in set_servos(), but it helps for
-          logging
-         */
-        channel_throttle->servo_out = channel_throttle->control_in;
-        channel_steer->servo_out = channel_steer->pwm_to_angle();
         break;
 
     case HOLD:
-        // hold position - stop motors and center steering
-        channel_throttle->servo_out = 0;
-        channel_steer->servo_out = 0;
         break;
 
     case INITIALISING:
-        break;
-	}
-}
-
-static void update_navigation()
-{
-    switch (control_mode) {
-    case MANUAL:
-    case HOLD:
-    case LEARNING:
-    case STEERING:
-    case INITIALISING:
-        break;
-
-    case AUTO:
-		verify_commands();
-        break;
-
-    case RTL:
-    case GUIDED:
-        // no loitering around the wp with the rover, goes direct to the wp position
-        calc_nav_steer();
-        calc_bearing_error();
-        if (verify_RTL()) {  
-            channel_throttle->servo_out = g.throttle_min.get();
-            set_mode(HOLD);
-        }
         break;
 	}
 }

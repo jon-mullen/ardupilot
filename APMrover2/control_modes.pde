@@ -22,7 +22,6 @@ static void read_control_switch()
 		set_mode((enum mode)modes[switchPosition].get());
 
 		oldSwitchPosition = switchPosition;
-		prev_WP = current_loc;
 
 		// reset navigation and speed integrators
 		// -------------------------

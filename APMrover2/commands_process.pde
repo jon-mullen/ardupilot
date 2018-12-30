@@ -119,8 +119,6 @@ static void process_nav_cmd()
 	non_nav_command_index	= NO_COMMAND;		// Redundant - remove?
 	non_nav_command_ID		= NO_COMMAND;		// Redundant - remove?
 
-	handle_process_nav_cmd();
-
 }
 
 static void process_non_nav_command()

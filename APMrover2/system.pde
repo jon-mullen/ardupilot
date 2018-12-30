@@ -316,16 +316,13 @@ static void set_mode(enum mode mode)
 			break;
 
 		case AUTO:
-            rtl_complete = false;
             restart_nav();
 			break;
 
 		case RTL:
-			do_RTL();
 			break;
 
 		default:
-			do_RTL();
 			break;
 	}
 
