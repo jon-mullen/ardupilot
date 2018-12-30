@@ -120,9 +120,7 @@ void init_home()
 }
 
 static void restart_nav()
-{  
-    g.pidNavSteer.reset_I();
-    g.pidSpeedThrottle.reset_I();
+{
     nav_command_ID = NO_COMMAND;
     nav_command_index = 0;
     process_next_command();

@@ -507,15 +507,6 @@ static void report_gains()
 	cliSerial->printf_P(PSTR("Gains\n"));
 	print_divider();
 
-	cliSerial->printf_P(PSTR("servo steer:\n"));
-	print_PID(&g.pidServoSteer);
-
-	cliSerial->printf_P(PSTR("nav steer:\n"));
-	print_PID(&g.pidNavSteer);
-
-	cliSerial->printf_P(PSTR("speed throttle:\n"));
-	print_PID(&g.pidSpeedThrottle);
-
 	print_blanks(2);
 }
 
@@ -604,16 +595,6 @@ static void report_modes()
 /***************************************************************************/
 // CLI utilities
 /***************************************************************************/
-
-static void
-print_PID(PID * pid)
-{
-	cliSerial->printf_P(PSTR("P: %4.3f, I:%4.3f, D:%4.3f, IMAX:%ld\n"),
-					pid->kP(),
-					pid->kI(),
-					pid->kD(),
-					(long)pid->imax());
-}
 
 static void
 print_radio_values()

@@ -347,9 +347,6 @@ static uint8_t	non_nav_command_index;
 static uint8_t	nav_command_ID		= NO_COMMAND;	
 static uint8_t	non_nav_command_ID	= NO_COMMAND;	
 
-// 0-(throttle_max - throttle_cruise) : throttle nudge in Auto mode using top 1/2 of throttle stick travel
-static int16_t     throttle_nudge = 0;
-
 // receiver RSSI
 static uint8_t receiver_rssi;
 
@@ -573,10 +570,6 @@ static void fast_loop()
     if (g.log_bitmask & MASK_LOG_IMU)
         DataFlash.Log_Write_IMU(&ins);
 
-	// custom code/exceptions for flight modes
-	// ---------------------------------------
-	update_current_mode();
-
 	// write out the servo PWM values
 	// ------------------------------
 	set_servos();
@@ -733,29 +726,6 @@ static void update_GPS(void)
 	}
 }
 
-static void update_current_mode(void)
-{ 
-    switch (control_mode){
-    case AUTO:
-    case RTL:
-    case GUIDED:
-        break;
-
-    case STEERING:
-        break;
-
-    case LEARNING:
-    case MANUAL:
-        break;
-
-    case HOLD:
-        break;
-
-    case INITIALISING:
-        break;
-	}
-}
-
 /*****************************************
 * Set the flight control servos based on the current calculated values
 *****************************************/
@@ -789,26 +759,6 @@ static void set_servos(void)
  #endif
 
 #endif
-}
-
-static bool demoing_servos;
-
-static void demo_servos(uint8_t i) {
-
-    while(i > 0) {
-        gcs_send_text_P(SEVERITY_LOW,PSTR("Demo Servos!"));
-        demoing_servos = true;
-#if HIL_MODE == HIL_MODE_DISABLED || HIL_SERVOS
-        hal.rcout->write(1, 1400);
-        mavlink_delay(400);
-        hal.rcout->write(1, 1600);
-        mavlink_delay(200);
-        hal.rcout->write(1, 1500);
-#endif
-        demoing_servos = false;
-        mavlink_delay(400);
-        i--;
-    }
 }
 
 

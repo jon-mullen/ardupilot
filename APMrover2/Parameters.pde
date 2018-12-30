@@ -387,10 +387,6 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @User: Standard
 	GSCALAR(waypoint_radius,        "WP_RADIUS",        2.0f),
 
-	GGROUP(pidNavSteer,             "HDNG2STEER_",  PID),
-	GGROUP(pidServoSteer,           "STEER2SRV_",   PID),
-	GGROUP(pidSpeedThrottle,        "SPEED2THR_", PID),
-
 	// variables not in the g class which contain EEPROM saved variables
 
     // @Group: COMPASS_

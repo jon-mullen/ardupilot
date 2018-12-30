@@ -127,12 +127,6 @@ public:
         k_param_camera_mount,
         k_param_camera_mount2,
 
-        //
-        // 240: PID Controllers
-        k_param_pidNavSteer = 230,
-        k_param_pidServoSteer,
-        k_param_pidSpeedThrottle,
-
         // high RC channels
         k_param_rc_9 = 235,
         k_param_rc_10,
@@ -243,12 +237,6 @@ public:
     AP_Int8     command_index;
     AP_Float    waypoint_radius;
 
-    // PID controllers
-    //
-    PID         pidNavSteer;
-    PID         pidServoSteer;
-    PID         pidSpeedThrottle;
-
     Parameters() :
         // RC channels
         rc_1(CH_1),
@@ -260,21 +248,15 @@ public:
         rc_7(CH_7),
         rc_8(CH_8),
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
-        rc_9                                    (CH_9),
+        rc_9                                    (CH_9)
 #endif
 #if CONFIG_HAL_BOARD == HAL_BOARD_APM2 || CONFIG_HAL_BOARD == HAL_BOARD_PX4
         rc_10                                   (CH_10),
-        rc_11                                   (CH_11),
+        rc_11                                   (CH_11)
 #endif
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
-        rc_12                                   (CH_12),
+        rc_12                                   (CH_12)
 #endif
-
-        // PID controller    initial P        initial I        initial D        initial imax
-        //-----------------------------------------------------------------------------------
-        pidNavSteer         (0.7,             0.1,             0.2,             2000),
-        pidServoSteer       (0.5,             0.1,             0.2,             2000),
-        pidSpeedThrottle    (0.7,             0.2,             0.2,             4000)
         {}
 };
 

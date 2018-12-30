@@ -23,10 +23,6 @@ static void read_control_switch()
 
 		oldSwitchPosition = switchPosition;
 
-		// reset navigation and speed integrators
-		// -------------------------
-        g.pidNavSteer.reset_I();
-        g.pidSpeedThrottle.reset_I();
 	}
 
 }
