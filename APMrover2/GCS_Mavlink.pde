@@ -415,37 +415,6 @@ static void NOINLINE send_hwstatus(mavlink_channel_t chan)
         hal.i2c->lockup_count());
 }
 
-static void NOINLINE send_rangefinder(mavlink_channel_t chan)
-{
-    if (!sonar.enabled()) {
-        // no sonar to report
-        return;
-    }
-
-    /*
-      report smaller distance of two sonars if more than one enabled
-     */
-    float distance_cm, voltage;
-    if (!sonar2.enabled()) {
-        distance_cm = sonar.distance_cm();
-        voltage = sonar.voltage();
-    } else {
-        float dist1 = sonar.distance_cm();
-        float dist2 = sonar2.distance_cm();
-        if (dist1 <= dist2) {
-            distance_cm = dist1;
-            voltage = sonar.voltage();
-        } else {
-            distance_cm = dist2;
-            voltage = sonar2.voltage();
-        }
-    }
-    mavlink_msg_rangefinder_send(
-        chan,
-        distance_cm * 0.01f,
-        voltage);
-}
-
 static void NOINLINE send_current_waypoint(mavlink_channel_t chan)
 {
     mavlink_msg_mission_current_send(
@@ -606,11 +575,6 @@ static bool mavlink_try_send_message(mavlink_channel_t chan, enum ap_message id,
     case MSG_HWSTATUS:
         CHECK_PAYLOAD_SIZE(HWSTATUS);
         send_hwstatus(chan);
-        break;
-
-    case MSG_RANGEFINDER:
-        CHECK_PAYLOAD_SIZE(RANGEFINDER);
-        send_rangefinder(chan);
         break;
 
     case MSG_RETRY_DEFERRED:

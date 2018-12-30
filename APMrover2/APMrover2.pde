@@ -246,13 +246,6 @@ AP_HAL::AnalogSource *vcc_pin;
 AP_HAL::AnalogSource * batt_volt_pin;
 AP_HAL::AnalogSource * batt_curr_pin;
 
-////////////////////////////////////////////////////////////////////////////////
-// SONAR selection
-////////////////////////////////////////////////////////////////////////////////
-//
-static AP_RangeFinder_analog sonar;
-static AP_RangeFinder_analog sonar2;
-
 // relay support
 AP_Relay relay;
 
@@ -634,8 +627,6 @@ static void fast_loop()
 	#endif
 
 	ahrs.update();
-
-    read_sonars();
 
 	// uses the yaw from the DCM to give more accurate turns
 	calc_bearing_error();

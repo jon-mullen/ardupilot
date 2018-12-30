@@ -13,7 +13,6 @@ static int8_t	test_ins(uint8_t argc, 			const Menu::arg *argv);
 static int8_t	test_battery(uint8_t argc, 		const Menu::arg *argv);
 static int8_t	test_relay(uint8_t argc,	 	const Menu::arg *argv);
 static int8_t	test_wp(uint8_t argc, 			const Menu::arg *argv);
-static int8_t	test_sonar(uint8_t argc, 	const Menu::arg *argv);
 static int8_t	test_mag(uint8_t argc, 			const Menu::arg *argv);
 static int8_t	test_modeswitch(uint8_t argc, 		const Menu::arg *argv);
 static int8_t	test_logging(uint8_t argc, 		const Menu::arg *argv);
@@ -39,7 +38,6 @@ static const struct Menu::command test_menu_commands[] PROGMEM = {
 	// when real sensors are attached or they are emulated
 	{"gps",			test_gps},
 	{"ins",			test_ins},
-	{"sonartest",	test_sonar},
 	{"compass",		test_mag},
 	{"logging",		test_logging},
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
@@ -506,73 +504,6 @@ test_mag(uint8_t argc, const Menu::arg *argv)
 
 //-------------------------------------------------------------------------------------------
 // real sensors that have not been simulated yet go here
-
-static int8_t
-test_sonar(uint8_t argc, const Menu::arg *argv)
-{
-    if (!sonar.enabled()) {
-        cliSerial->println_P(PSTR("WARNING: Sonar is not enabled"));
-    }
-
-    print_hit_enter();
-    init_sonar();
-    
-    float sonar_dist_cm_min = 0.0f;
-    float sonar_dist_cm_max = 0.0f;
-    float voltage_min=0.0f, voltage_max = 0.0f;
-    float sonar2_dist_cm_min = 0.0f;
-    float sonar2_dist_cm_max = 0.0f;
-    float voltage2_min=0.0f, voltage2_max = 0.0f;
-    uint32_t last_print = 0;
-
-	while (true) {
-        delay(20);
-        uint32_t now = millis();
-
-        float dist_cm = sonar.distance_cm();
-        float voltage = sonar.voltage();
-        if (sonar_dist_cm_min == 0.0f) {
-            sonar_dist_cm_min = dist_cm;
-            voltage_min = voltage;
-        }
-        sonar_dist_cm_max = max(sonar_dist_cm_max, dist_cm);
-        sonar_dist_cm_min = min(sonar_dist_cm_min, dist_cm);
-        voltage_min = min(voltage_min, voltage);
-        voltage_max = max(voltage_max, voltage);
-
-        dist_cm = sonar2.distance_cm();
-        voltage = sonar2.voltage();
-        if (sonar2_dist_cm_min == 0.0f) {
-            sonar2_dist_cm_min = dist_cm;
-            voltage2_min = voltage;
-        }
-        sonar2_dist_cm_max = max(sonar2_dist_cm_max, dist_cm);
-        sonar2_dist_cm_min = min(sonar2_dist_cm_min, dist_cm);
-        voltage2_min = min(voltage2_min, voltage);
-        voltage2_max = max(voltage2_max, voltage);
-
-        if (now - last_print >= 200) {
-            cliSerial->printf_P(PSTR("sonar1 dist=%.1f:%.1fcm volt1=%.2f:%.2f   sonar2 dist=%.1f:%.1fcm volt2=%.2f:%.2f\n"), 
-                                sonar_dist_cm_min, 
-                                sonar_dist_cm_max, 
-                                voltage_min,
-                                voltage_max,
-                                sonar2_dist_cm_min, 
-                                sonar2_dist_cm_max, 
-                                voltage2_min,
-                                voltage2_max);
-            voltage_min = voltage_max = 0.0f;
-            voltage2_min = voltage2_max = 0.0f;
-            sonar_dist_cm_min = sonar_dist_cm_max = 0.0f;
-            sonar2_dist_cm_min = sonar2_dist_cm_max = 0.0f;
-            last_print = now;
-        }
-        if (cliSerial->available() > 0) {
-            break;
-	    }
-    }
-    return (0);
-}
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
 /*

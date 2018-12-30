@@ -48,7 +48,6 @@ print_log_menu(void)
 		PLOG(IMU);
 		PLOG(CMD);
 		PLOG(CURRENT);
-		PLOG(SONAR);
 		PLOG(COMPASS);
 		PLOG(CAMERA);
 		#undef PLOG
@@ -140,7 +139,6 @@ select_logs(uint8_t argc, const Menu::arg *argv)
 		TARG(IMU);
 		TARG(CMD);
 		TARG(CURRENT);
-		TARG(SONAR);
 		TARG(COMPASS);
 		TARG(CAMERA);
 		#undef TARG
@@ -361,40 +359,6 @@ static void Log_Write_Mode()
     DataFlash.WriteBlock(&pkt, sizeof(pkt));
 }
 
-
-struct PACKED log_Sonar {
-    LOG_PACKET_HEADER;
-    int16_t nav_steer;
-    uint16_t sonar1_distance;
-    uint16_t sonar2_distance;
-    uint16_t detected_count;
-    int8_t   turn_angle;
-    uint16_t turn_time;
-    uint16_t ground_speed;
-    int8_t   throttle;
-};
-
-// Write a sonar packet
-static void Log_Write_Sonar()
-{
-    uint16_t turn_time = 0;
-    if (obstacle.turn_angle != 0) {
-        turn_time = hal.scheduler->millis() - obstacle.detected_time_ms;
-    }
-    struct log_Sonar pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_SONAR_MSG),
-        nav_steer       : (int16_t)nav_steer_cd,
-        sonar1_distance : (uint16_t)sonar.distance_cm(),
-        sonar2_distance : (uint16_t)sonar2.distance_cm(),
-        detected_count  : obstacle.detected_count,
-        turn_angle      : (int8_t)obstacle.turn_angle,
-        turn_time       : turn_time,
-        ground_speed    : (uint16_t)(ground_speed*100),
-        throttle        : (int8_t)(100 * channel_throttle->norm_output())
-    };
-    DataFlash.WriteBlock(&pkt, sizeof(pkt));
-}
-
 struct PACKED log_Current {
     LOG_PACKET_HEADER;
     int16_t throttle_in;
@@ -467,8 +431,6 @@ static const struct LogStructure log_structure[] PROGMEM = {
       "CTUN", "hcchf",      "Steer,Roll,Pitch,ThrOut,AccY" },
     { LOG_NTUN_MSG, sizeof(log_Nav_Tuning),         
       "NTUN", "HfHHhb",     "Yaw,WpDist,TargBrg,NavBrg,NavGain,Thr" },
-    { LOG_SONAR_MSG, sizeof(log_Sonar),             
-      "SONR", "hHHHbHCb",   "NavStr,S1Dist,S2Dist,DCnt,TAng,TTim,Spd,Thr" },
     { LOG_CURRENT_MSG, sizeof(log_Current),             
       "CURR", "hhhHf",      "Thr,Volt,Curr,Vcc,CurrTot" },
     { LOG_MODE_MSG, sizeof(log_Mode),             
@@ -510,7 +472,6 @@ static void Log_Write_Nav_Tuning() {}
 static void Log_Write_Performance() {}
 static int8_t process_logs(uint8_t argc, const Menu::arg *argv) { return 0; }
 static void Log_Write_Control_Tuning() {}
-static void Log_Write_Sonar() {}
 static void Log_Write_Mode() {}
 static void Log_Write_Attitude() {}
 static void Log_Write_Compass() {}

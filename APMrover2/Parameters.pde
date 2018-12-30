@@ -335,41 +335,6 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @User: Standard
 	GSCALAR(fs_gcs_enabled, "FS_GCS_ENABLE",   0),
 
-	// @Param: SONAR_TRIGGER_CM
-	// @DisplayName: Sonar trigger distance
-	// @Description: The distance from an obstacle in centimeters at which the sonar triggers a turn to avoid the obstacle
-	// @Units: centimeters
-    // @Range: 0 1000
-    // @Increment: 1
-	// @User: Standard
-	GSCALAR(sonar_trigger_cm,   "SONAR_TRIGGER_CM",    100),
-
-	// @Param: SONAR_TURN_ANGLE
-	// @DisplayName: Sonar trigger angle
-	// @Description: The course deviation in degrees to apply while avoiding an obstacle detected with the sonar. A positive number means to turn right, and a negative angle means to turn left.
-	// @Units: centimeters
-    // @Range: -45 45
-    // @Increment: 1
-	// @User: Standard
-	GSCALAR(sonar_turn_angle,   "SONAR_TURN_ANGLE",    45),
-
-	// @Param: SONAR_TURN_TIME
-	// @DisplayName: Sonar turn time
-	// @Description: The amount of time in seconds to apply the SONAR_TURN_ANGLE after detecting an obstacle.
-	// @Units: seconds
-    // @Range: 0 100
-    // @Increment: 0.1
-	// @User: Standard
-	GSCALAR(sonar_turn_time,    "SONAR_TURN_TIME",     1.0f),
-
-	// @Param: SONAR_DEBOUNCE
-	// @DisplayName: Sonar debounce count
-	// @Description: The number of 50Hz sonar hits needed to trigger an obstacle avoidance event. If you get a lot of false sonar events then raise this number, but if you make it too large then it will cause lag in detecting obstacles, which could cause you go hit the obstacle.
-    // @Range: 1 100
-    // @Increment: 1
-	// @User: Standard
-	GSCALAR(sonar_debounce,   "SONAR_DEBOUNCE",    2),
-
     // @Param: LEARN_CH
     // @DisplayName: Learning channel
     // @Description: RC Channel to use for learning waypoints
@@ -460,14 +425,6 @@ const AP_Param::Info var_info[] PROGMEM = {
 
 	GOBJECT(gcs0,					"SR0_",     GCS_MAVLINK),
 	GOBJECT(gcs3,					"SR3_",     GCS_MAVLINK),
-
-    // @Group: SONAR_
-    // @Path: ../libraries/AP_RangeFinder/AP_RangeFinder_analog.cpp
-    GOBJECT(sonar,                  "SONAR_", AP_RangeFinder_analog),
-
-    // @Group: SONAR2_
-    // @Path: ../libraries/AP_RangeFinder/AP_RangeFinder_analog.cpp
-    GOBJECT(sonar2,                 "SONAR2_", AP_RangeFinder_analog),
 
     // @Group: INS_
     // @Path: ../libraries/AP_InertialSensor/AP_InertialSensor.cpp

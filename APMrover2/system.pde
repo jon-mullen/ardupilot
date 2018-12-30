@@ -180,9 +180,6 @@ static void init_ardupilot()
         }
 	}
 
-	// initialise sonar
-    init_sonar();
-
 	// Do GPS init
 	g_gps = &g_gps_driver;
     // GPS initialisation
