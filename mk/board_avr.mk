@@ -124,6 +124,8 @@ endif
 # Built products
 #
 
+$(info Building to $(BUILDROOT))
+
 # The ELF file
 SKETCHELF		=	$(BUILDROOT)/$(SKETCH).elf
 

@@ -1,43 +1,43 @@
 // -*- tab-width: 4; Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 /*****************************************************************************
 The init_ardupilot function processes everything we need for an in - air restart
-	We will determine later if we are actually on the ground and process a
-	ground start in that case.
+    We will determine later if we are actually on the ground and process a
+    ground start in that case.
 
 *****************************************************************************/
 
 #if CLI_ENABLED == ENABLED
 
 // Functions called from the top-level menu
-static int8_t	process_logs(uint8_t argc, const Menu::arg *argv);	// in Log.pde
-static int8_t	setup_mode(uint8_t argc, const Menu::arg *argv);	// in setup.pde
-static int8_t	test_mode(uint8_t argc, const Menu::arg *argv);		// in test.cpp
+static int8_t   process_logs(uint8_t argc, const Menu::arg *argv);  // in Log.pde
+static int8_t   setup_mode(uint8_t argc, const Menu::arg *argv);    // in setup.pde
+static int8_t   test_mode(uint8_t argc, const Menu::arg *argv);     // in test.cpp
 static int8_t   reboot_board(uint8_t argc, const Menu::arg *argv);
 
 // This is the help function
 // PSTR is an AVR macro to read strings from flash memory
 // printf_P is a version of print_f that reads from flash memory
-static int8_t	main_menu_help(uint8_t argc, const Menu::arg *argv)
+static int8_t   main_menu_help(uint8_t argc, const Menu::arg *argv)
 {
-	cliSerial->printf_P(PSTR("Commands:\n"
-						 "  logs        log readback/setup mode\n"
-						 "  setup       setup mode\n"
-						 "  test        test mode\n"
-						 "\n"
-						 "Move the slide switch and reset to FLY.\n"
-						 "\n"));
-	return(0);
+    cliSerial->printf_P(PSTR("Commands:\n"
+                         "  logs        log readback/setup mode\n"
+                         "  setup       setup mode\n"
+                         "  test        test mode\n"
+                         "\n"
+                         "Move the slide switch and reset to FLY.\n"
+                         "\n"));
+    return(0);
 }
 
 // Command/function table for the top-level menu.
 static const struct Menu::command main_menu_commands[] PROGMEM = {
-//   command		function called
+//   command        function called
 //   =======        ===============
-	{"logs",		process_logs},
-	{"setup",		setup_mode},
-	{"test",		test_mode},
+    {"logs",        process_logs},
+    {"setup",       setup_mode},
+    {"test",        test_mode},
     {"reboot",      reboot_board},
-	{"help",		main_menu_help}
+    {"help",        main_menu_help}
 };
 
 // Create the top-level menu object.
@@ -89,37 +89,37 @@ static void init_ardupilot()
     }
 #endif
 
-	// Console serial port
-	//
-	// The console port buffers are defined to be sufficiently large to support
-	// the console's use as a logging device, optionally as the GPS port when
-	// GPS_PROTOCOL_IMU is selected, and as the telemetry port.
-	//
-	// XXX This could be optimised to reduce the buffer sizes in the cases
-	// where they are not otherwise required.
-	//
+    // Console serial port
+    //
+    // The console port buffers are defined to be sufficiently large to support
+    // the console's use as a logging device, optionally as the GPS port when
+    // GPS_PROTOCOL_IMU is selected, and as the telemetry port.
+    //
+    // XXX This could be optimised to reduce the buffer sizes in the cases
+    // where they are not otherwise required.
+    //
     hal.uartA->begin(SERIAL0_BAUD, 128, 128);
 
-	// GPS serial port.
-	//
-	// XXX currently the EM406 (SiRF receiver) is nominally configured
-	// at 57600, however it's not been supported to date.  We should
-	// probably standardise on 38400.
-	//
-	// XXX the 128 byte receive buffer may be too small for NMEA, depending
-	// on the message set configured.
-	//
+    // GPS serial port.
+    //
+    // XXX currently the EM406 (SiRF receiver) is nominally configured
+    // at 57600, however it's not been supported to date.  We should
+    // probably standardise on 38400.
+    //
+    // XXX the 128 byte receive buffer may be too small for NMEA, depending
+    // on the message set configured.
+    //
     // standard gps running
     hal.uartB->begin(115200, 128, 16);
 
-	cliSerial->printf_P(PSTR("\n\nInit " THISFIRMWARE
-						 "\n\nFree RAM: %u\n"),
+    cliSerial->printf_P(PSTR("\n\nInit " THISFIRMWARE
+                         "\n\nFree RAM: %u\n"),
                     memcheck_available_memory());
                     
-	//
-	// Check the EEPROM format version before loading any parameters from EEPROM.
-	//
-	
+    //
+    // Check the EEPROM format version before loading any parameters from EEPROM.
+    //
+    
     load_parameters();
 
     set_control_channels();
@@ -131,8 +131,8 @@ static void init_ardupilot()
     // used to detect in-flight resets
     g.num_resets.set_and_save(g.num_resets+1);
 
-	// init the GCS
-	gcs0.init(hal.uartA);
+    // init the GCS
+    gcs0.init(hal.uartA);
 
     // Register mavlink_delay_cb, which will run anytime you have
     // more than 5ms remaining in your call to hal.scheduler->delay
@@ -147,61 +147,61 @@ static void init_ardupilot()
 #else
     // we have a 2nd serial port for telemetry
     hal.uartC->begin(map_baudrate(g.serial3_baud, SERIAL3_BAUD), 128, 128);
-	gcs3.init(hal.uartC);
+    gcs3.init(hal.uartC);
 #endif
 
-	mavlink_system.sysid = g.sysid_this_mav;
+    mavlink_system.sysid = g.sysid_this_mav;
 
 #if LOGGING_ENABLED == ENABLED
-	DataFlash.Init(); 	// DataFlash log initialization
+    DataFlash.Init();   // DataFlash log initialization
     if (!DataFlash.CardInserted()) {
         gcs_send_text_P(SEVERITY_LOW, PSTR("No dataflash card inserted"));
         g.log_bitmask.set(0);
     } else if (DataFlash.NeedErase()) {
         gcs_send_text_P(SEVERITY_LOW, PSTR("ERASING LOGS"));
-		do_erase_logs();
+        do_erase_logs();
     }
-	if (g.log_bitmask != 0) {
-		start_logging();
-	}
+    if (g.log_bitmask != 0) {
+        start_logging();
+    }
 #endif
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_APM1
     adc.Init();      // APM ADC library initialization
 #endif
 
-	if (g.compass_enabled==true) {
-		if (!compass.init()|| !compass.read()) {
+    if (g.compass_enabled==true) {
+        if (!compass.init()|| !compass.read()) {
             cliSerial->println_P(PSTR("Compass initialisation failed!"));
             g.compass_enabled = false;
         } else {
             ahrs.set_compass(&compass);
-            //compass.get_offsets();						// load offsets to account for airframe magnetic interference
+            //compass.get_offsets();                        // load offsets to account for airframe magnetic interference
         }
-	}
+    }
 
-	// Do GPS init
-	g_gps = &g_gps_driver;
+    // Do GPS init
+    g_gps = &g_gps_driver;
     // GPS initialisation
-	g_gps->init(hal.uartB, GPS::GPS_ENGINE_AUTOMOTIVE);
+    g_gps->init(hal.uartB, GPS::GPS_ENGINE_AUTOMOTIVE);
 
-	//mavlink_system.sysid = MAV_SYSTEM_ID;				// Using g.sysid_this_mav
-	mavlink_system.compid = 1;	//MAV_COMP_ID_IMU;   // We do not check for comp id
-	mavlink_system.type = MAV_TYPE_GROUND_ROVER;
+    //mavlink_system.sysid = MAV_SYSTEM_ID;             // Using g.sysid_this_mav
+    mavlink_system.compid = 1;  //MAV_COMP_ID_IMU;   // We do not check for comp id
+    mavlink_system.type = MAV_TYPE_GROUND_ROVER;
 
     rc_override_active = hal.rcin->set_overrides(rc_override, 8);
 
-	init_rc_in();		// sets up rc channels from radio
-	init_rc_out();		// sets up the timer libs
+    init_rc_in();       // sets up rc channels from radio
+    init_rc_out();      // sets up the timer libs
 
-	pinMode(C_LED_PIN, OUTPUT);			// GPS status LED
-	pinMode(A_LED_PIN, OUTPUT);			// GPS status LED
-	pinMode(B_LED_PIN, OUTPUT);			// GPS status LED
+    pinMode(C_LED_PIN, OUTPUT);         // GPS status LED
+    pinMode(A_LED_PIN, OUTPUT);         // GPS status LED
+    pinMode(B_LED_PIN, OUTPUT);         // GPS status LED
 #if SLIDE_SWITCH_PIN > 0
-	pinMode(SLIDE_SWITCH_PIN, INPUT);	// To enter interactive mode
+    pinMode(SLIDE_SWITCH_PIN, INPUT);   // To enter interactive mode
 #endif
 #if CONFIG_PUSHBUTTON == ENABLED
-	pinMode(PUSHBUTTON_PIN, INPUT);		// unused
+    pinMode(PUSHBUTTON_PIN, INPUT);     // unused
 #endif
     relay.init();
 
@@ -211,24 +211,24 @@ static void init_ardupilot()
      */
     hal.scheduler->register_timer_failsafe(failsafe_check, 1000);
 
-	// If the switch is in 'menu' mode, run the main menu.
-	//
-	// Since we can't be sure that the setup or test mode won't leave
-	// the system in an odd state, we don't let the user exit the top
-	// menu; they must reset in order to fly.
-	//
+    // If the switch is in 'menu' mode, run the main menu.
+    //
+    // Since we can't be sure that the setup or test mode won't leave
+    // the system in an odd state, we don't let the user exit the top
+    // menu; they must reset in order to fly.
+    //
 #if CLI_ENABLED == ENABLED && CLI_SLIDER_ENABLED == ENABLED
-	if (digitalRead(SLIDE_SWITCH_PIN) == 0) {
-		digitalWrite(A_LED_PIN,LED_ON);		// turn on setup-mode LED
-		cliSerial->printf_P(PSTR("\n"
-							 "Entering interactive setup mode...\n"
-							 "\n"
-							 "If using the Arduino Serial Monitor, ensure Line Ending is set to Carriage Return.\n"
-							 "Type 'help' to list commands, 'exit' to leave a submenu.\n"
-							 "Visit the 'setup' menu for first-time configuration.\n"));
+    if (digitalRead(SLIDE_SWITCH_PIN) == 0) {
+        digitalWrite(A_LED_PIN,LED_ON);     // turn on setup-mode LED
+        cliSerial->printf_P(PSTR("\n"
+                             "Entering interactive setup mode...\n"
+                             "\n"
+                             "If using the Arduino Serial Monitor, ensure Line Ending is set to Carriage Return.\n"
+                             "Type 'help' to list commands, 'exit' to leave a submenu.\n"
+                             "Visit the 'setup' menu for first-time configuration.\n"));
         cliSerial->println_P(PSTR("\nMove the slide switch and reset to FLY.\n"));
         run_cli(&cliSerial);
-	}
+    }
 #else
     const prog_char_t *msg = PSTR("\nPress ENTER 3 times to start interactive setup\n");
     cliSerial->println_P(msg);
@@ -237,16 +237,16 @@ static void init_ardupilot()
 #endif
 #endif // CLI_ENABLED
 
-	startup_ground();
+    startup_ground();
 
-	if (g.log_bitmask & MASK_LOG_CMD)
-			Log_Write_Startup(TYPE_GROUNDSTART_MSG);
+    if (g.log_bitmask & MASK_LOG_CMD)
+            Log_Write_Startup(TYPE_GROUNDSTART_MSG);
 
     set_mode((enum mode)g.initial_mode.get());
 
-	// set the correct flight mode
-	// ---------------------------
-	reset_control_switch();
+    // set the correct flight mode
+    // ---------------------------
+    reset_control_switch();
 }
 
 //********************************************************************************
@@ -256,41 +256,41 @@ static void startup_ground(void)
 {
     set_mode(INITIALISING);
 
-	gcs_send_text_P(SEVERITY_LOW,PSTR("<startup_ground> GROUND START"));
+    gcs_send_text_P(SEVERITY_LOW,PSTR("<startup_ground> GROUND START"));
 
-	#if(GROUND_START_DELAY > 0)
-		gcs_send_text_P(SEVERITY_LOW,PSTR("<startup_ground> With Delay"));
-		delay(GROUND_START_DELAY * 1000);
-	#endif
+    #if(GROUND_START_DELAY > 0)
+        gcs_send_text_P(SEVERITY_LOW,PSTR("<startup_ground> With Delay"));
+        delay(GROUND_START_DELAY * 1000);
+    #endif
 
-	//IMU ground start
-	//------------------------
+    //IMU ground start
+    //------------------------
     //
 
-	startup_INS_ground(false);
+    startup_INS_ground(false);
 
-	// read the radio to set trims
-	// ---------------------------
-	trim_radio();
+    // read the radio to set trims
+    // ---------------------------
+    trim_radio();
 
-	// initialize commands
-	// -------------------
-	init_commands();
+    // initialize commands
+    // -------------------
+    init_commands();
 
     hal.uartA->set_blocking_writes(false);
     hal.uartC->set_blocking_writes(false);
 
-	gcs_send_text_P(SEVERITY_LOW,PSTR("\n\n Ready to drive."));
+    gcs_send_text_P(SEVERITY_LOW,PSTR("\n\n Ready to drive."));
 }
 
 static void set_mode(enum mode mode)
 {       
 
-	if(control_mode == mode){
-		// don't switch modes if we are already in the correct mode.
-		return;
-	}
-	control_mode = mode;
+    if(control_mode == mode){
+        // don't switch modes if we are already in the correct mode.
+        return;
+    }
+    control_mode = mode;
     throttle_last = 0;
     throttle = 500;
 
@@ -298,27 +298,27 @@ static void set_mode(enum mode mode)
         auto_triggered = false;
     }
         
-	switch(control_mode)
-	{
-		case MANUAL:
-		case HOLD:
-		case LEARNING:
-		case STEERING:
-			break;
+    switch(control_mode)
+    {
+        case MANUAL:
+        case HOLD:
+        case LEARNING:
+        case STEERING:
+            break;
 
-		case AUTO:
+        case AUTO:
             restart_nav();
-			break;
+            break;
 
-		case RTL:
-			break;
+        case RTL:
+            break;
 
-		default:
-			break;
-	}
+        default:
+            break;
+    }
 
-	if (g.log_bitmask & MASK_LOG_MODE)
-		Log_Write_Mode();
+    if (g.log_bitmask & MASK_LOG_MODE)
+        Log_Write_Mode();
 }
 
 /*
@@ -366,66 +366,66 @@ static void failsafe_trigger(uint8_t failsafe_type, bool on)
 static void startup_INS_ground(bool force_accel_level)
 {
     gcs_send_text_P(SEVERITY_MEDIUM, PSTR("Warming up ADC..."));
- 	mavlink_delay(500);
+    mavlink_delay(500);
 
     gcs_send_text_P(SEVERITY_MEDIUM, PSTR("Beginning INS calibration; do not move vehicle"));
-	mavlink_delay(1000);
+    mavlink_delay(1000);
 
     ahrs.init();
-	ahrs.set_fly_forward(true);
-	ins.init(AP_InertialSensor::COLD_START, 
+    ahrs.set_fly_forward(true);
+    ins.init(AP_InertialSensor::COLD_START, 
              ins_sample_rate, 
              flash_leds);
     if (force_accel_level) {
         // when MANUAL_LEVEL is set to 1 we don't do accelerometer
         // levelling on each boot, and instead rely on the user to do
-        // it once via the ground station	
+        // it once via the ground station   
         ins.init_accel(flash_leds);
         ahrs.set_trim(Vector3f(0, 0, 0));
-	}
+    }
     ahrs.reset();
 
-	digitalWrite(B_LED_PIN, LED_ON);		// Set LED B high to indicate INS ready
-	digitalWrite(A_LED_PIN, LED_OFF);
-	digitalWrite(C_LED_PIN, LED_OFF);
+    digitalWrite(B_LED_PIN, LED_ON);        // Set LED B high to indicate INS ready
+    digitalWrite(A_LED_PIN, LED_OFF);
+    digitalWrite(C_LED_PIN, LED_OFF);
 }
 
 static void update_GPS_light(void)
 {
-	// GPS LED on if we have a fix or Blink GPS LED if we are receiving data
-	// ---------------------------------------------------------------------
-	switch (g_gps->status()) {
-		case(2):
-			digitalWrite(C_LED_PIN, LED_ON);  //Turn LED C on when gps has valid fix.
-			break;
+    // GPS LED on if we have a fix or Blink GPS LED if we are receiving data
+    // ---------------------------------------------------------------------
+    switch (g_gps->status()) {
+        case(2):
+            digitalWrite(C_LED_PIN, LED_ON);  //Turn LED C on when gps has valid fix.
+            break;
 
-		case(1):
-			if (g_gps->valid_read == true){
-				GPS_light = !GPS_light; // Toggle light on and off to indicate gps messages being received, but no GPS fix lock
-				if (GPS_light){
-					digitalWrite(C_LED_PIN, LED_OFF);
-				} else {
-					digitalWrite(C_LED_PIN, LED_ON);
-				}
-				g_gps->valid_read = false;
-			}
-			break;
+        case(1):
+            if (g_gps->valid_read == true){
+                GPS_light = !GPS_light; // Toggle light on and off to indicate gps messages being received, but no GPS fix lock
+                if (GPS_light){
+                    digitalWrite(C_LED_PIN, LED_OFF);
+                } else {
+                    digitalWrite(C_LED_PIN, LED_ON);
+                }
+                g_gps->valid_read = false;
+            }
+            break;
 
-		default:
-			digitalWrite(C_LED_PIN, LED_OFF);
-			break;
-	}
+        default:
+            digitalWrite(C_LED_PIN, LED_OFF);
+            break;
+    }
 }
 
 
 static void resetPerfData(void) {
-	mainLoop_count 			= 0;
-	G_Dt_max 				= 0;
-	ahrs.renorm_range_count 	= 0;
-	ahrs.renorm_blowup_count = 0;
-	gps_fix_count 			= 0;
-	pmTest1					= 0;
-	perf_mon_timer 			= millis();
+    mainLoop_count          = 0;
+    G_Dt_max                = 0;
+    ahrs.renorm_range_count     = 0;
+    ahrs.renorm_blowup_count = 0;
+    gps_fix_count           = 0;
+    pmTest1                 = 0;
+    perf_mon_timer          = millis();
 }
 
 
@@ -528,22 +528,54 @@ static void reboot_apm(void)
 /*
   check a digitial pin for high,low (1/0)
  */
-static uint8_t check_digital_pin(uint8_t pin)
+static void set_digital_pin(uint8_t pin, uint8_t value)
 {
 
     // JTM_TODO: this is orphaned, repurpose
     int8_t dpin = hal.gpio->analogPinToDigitalPin(pin);
     if (dpin == -1) {
-        return 0;
+        return;
     }
-    // ensure we are in input mode
-    hal.gpio->pinMode(dpin, GPIO_INPUT);
+    // ensure we are in output mode
+    hal.gpio->pinMode(dpin, GPIO_OUTPUT);
 
-    // enable pullup
-    hal.gpio->write(dpin, 1);
+    // write pullup
+    hal.gpio->write(dpin, value);
 
-    return hal.gpio->read(dpin);
 }
+
+static void set_steering(int8_t direction)
+{
+
+    if(direction == 0)
+    {
+        set_digital_pin(STEER_RELAY_1, RELAY_OPEN);
+        set_digital_pin(STEER_RELAY_2, RELAY_OPEN);
+    }
+    else if(direction == 1)
+    {
+        set_digital_pin(STEER_RELAY_1, RELAY_OPEN);
+        set_digital_pin(STEER_RELAY_2, RELAY_CLOSED);
+    }
+    else if(direction == -1)
+    {
+        set_digital_pin(STEER_RELAY_1, RELAY_CLOSED);
+        set_digital_pin(STEER_RELAY_2, RELAY_OPEN);
+    }
+}
+
+static void set_throttle(uint8_t level)
+{
+    // if(level > 0)
+    // {
+    //     set_digital_pin(4, 1);
+    // }
+    // else
+    // {
+    //     set_digital_pin(4, 0);
+    // }
+}
+
 
 /*
   write to a servo

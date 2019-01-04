@@ -1,8 +1,8 @@
 /// -*- tab-width: 4; Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
-#define THISFIRMWARE "ArduRover v2.43beta2"
+#define THISFIRMWARE "ArduRover v4.20"
 
-/* 
+/*
 This is the APMrover2 firmware. It was originally derived from
 ArduPlane by Jean-Louis Naudin (JLN), and then rewritten after the
 AP_HAL merge by Andrew Tridgell
@@ -10,9 +10,9 @@ AP_HAL merge by Andrew Tridgell
 Maintainer: Andrew Tridgell
 
 Authors:    Doug Weibel, Jose Julio, Jordi Munoz, Jason Short, Andrew Tridgell, Randy Mackay, Pat Hickey, John Arne Birkeland, Olivier Adler, Jean-Louis Naudin
-Thanks to:  Chris Anderson, Michael Oborne, Paul Mather, Bill Premerlani, James Cohen, JB from rotorFX, Automatik, Fefenin, Peter Meister, Remzibi, Yury Smirnov, Sandro Benigno, Max Levine, Roberto Navoni, Lorenz Meier 
+Thanks to:  Chris Anderson, Michael Oborne, Paul Mather, Bill Premerlani, James Cohen, JB from rotorFX, Automatik, Fefenin, Peter Meister, Remzibi, Yury Smirnov, Sandro Benigno, Max Levine, Roberto Navoni, Lorenz Meier
 Please contribute your ideas!
-APMrover alpha version tester: Franco Borasio, Daniel Chapelat... 
+APMrover alpha version tester: Franco Borasio, Daniel Chapelat...
 
 This firmware is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -59,14 +59,12 @@ version 2.1 of the License, or (at your option) any later version.
 #include <AP_Math.h>        // ArduPilot Mega Vector/Matrix math Library
 #include <AP_InertialSensor.h> // Inertial Sensor (uncalibated IMU) Library
 #include <AP_AHRS.h>         // ArduPilot Mega DCM Library
-#include <PID.h>            // PID library
 #include <RC_Channel.h>     // RC Channel Library
-#include <AP_RangeFinder.h>	// Range finder library
-#include <Filter.h>			// Filter library
-#include <Butter.h>			// Filter library - butterworth filter
+#include <AP_RangeFinder.h> // Range finder library
+#include <Filter.h>         // Filter library
+#include <Butter.h>         // Filter library - butterworth filter
 #include <AP_Buffer.h>      // FIFO buffer library
-#include <ModeFilter.h>		// Mode Filter from Filter library
-// #include <AverageFilter.h>	// Mode Filter from Filter library
+#include <ModeFilter.h>     // Mode Filter from Filter library
 #include <AP_Relay.h>       // APM relay
 #include <GCS_MAVLink.h>    // MAVLink GCS definitions
 #include <AP_Airspeed.h>    // needed for AHRS build
@@ -167,7 +165,7 @@ DataFlash_Empty DataFlash;
 static GPS         *g_gps;
 
 // flight modes convenience array
-static AP_Int8		*modes = &g.mode1;
+static AP_Int8      *modes = &g.mode1;
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_APM1
 static AP_ADC_ADS7844 adc;
@@ -180,7 +178,7 @@ static AP_Compass_HMC5843 compass;
 #elif CONFIG_COMPASS == AP_COMPASS_HIL
 static AP_Compass_HIL compass;
 #else
- #error Unrecognized CONFIG_COMPASS setting
+#error Unrecognized CONFIG_COMPASS setting
 #endif
 
 // GPS selection
@@ -209,7 +207,7 @@ AP_GPS_None     g_gps_driver;
 AP_GPS_HIL      g_gps_driver;
 
 #else
-  #error Unrecognised GPS_PROTOCOL setting.
+#error Unrecognised GPS_PROTOCOL setting.
 #endif // GPS PROTOCOL
 
 #if CONFIG_INS_TYPE == CONFIG_INS_MPU6000
@@ -221,7 +219,7 @@ AP_InertialSensor_Stub ins;
 #elif CONFIG_INS_TYPE == CONFIG_INS_OILPAN
 AP_InertialSensor_Oilpan ins( &adc );
 #else
-  #error Unrecognised CONFIG_INS_TYPE setting.
+#error Unrecognised CONFIG_INS_TYPE setting.
 #endif // CONFIG_INS_TYPE
 
 AP_AHRS_DCM ahrs(&ins, g_gps);
@@ -234,10 +232,10 @@ SITL sitl;
 // GCS selection
 ////////////////////////////////////////////////////////////////////////////////
 //
-GCS_MAVLINK	gcs0;
-GCS_MAVLINK	gcs3;
+GCS_MAVLINK gcs0;
+GCS_MAVLINK gcs3;
 
-// a pin for reading the receiver RSSI voltage. The scaling by 0.25 
+// a pin for reading the receiver RSSI voltage. The scaling by 0.25
 // is to take the 0 to 1024 range down to an 8 bit range for MAVLink
 AP_HAL::AnalogSource *rssi_analog_source;
 
@@ -250,7 +248,7 @@ AP_HAL::AnalogSource * batt_curr_pin;
 AP_Relay relay;
 
 // The rover's current location
-static struct 	Location current_loc;
+static struct   Location current_loc;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -263,17 +261,17 @@ static bool usb_connected;
 #endif
 
 /* Radio values
-		Channel assignments
-			1   Steering
-			2   ---
-			3   Throttle
-			4   ---
-			5   Aux5
-			6   Aux6
-			7   Aux7/learn
-			8   Aux8/Mode
-		Each Aux channel can be configured to have any of the available auxiliary functions assigned to it.
-		See libraries/RC_Channel/RC_Channel_aux.h for more information
+        Channel assignments
+            1   Steering
+            2   ---
+            3   Throttle
+            4   ---
+            5   Aux5
+            6   Aux6
+            7   Aux7/learn
+            8   Aux8/Mode
+        Each Aux channel can be configured to have any of the available auxiliary functions assigned to it.
+        See libraries/RC_Channel/RC_Channel_aux.h for more information
 */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -284,10 +282,10 @@ static bool usb_connected;
 enum mode   control_mode        = INITIALISING;
 // Used to maintain the state of the previous control switch position
 // This is set to -1 when we need to re-read the switch
-uint8_t 	oldSwitchPosition;
+uint8_t     oldSwitchPosition;
 // These are values received from the GCS if the user is using GCS joystick
 // control and are substituted for the values coming from the RC radio
-static int16_t rc_override[8] = {0,0,0,0,0,0,0,0};
+static int16_t rc_override[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 // A flag if GCS joystick control is in use
 static bool rc_override_active = false;
 
@@ -295,7 +293,7 @@ static bool rc_override_active = false;
 // Failsafe
 ////////////////////////////////////////////////////////////////////////////////
 // A tracking variable for type of failsafe active
-// Used for failsafe based on loss of RC signal or GCS signal. See 
+// Used for failsafe based on loss of RC signal or GCS signal. See
 // FAILSAFE_EVENT_*
 static struct {
     uint8_t bits;
@@ -308,7 +306,7 @@ static struct {
 // LED output
 ////////////////////////////////////////////////////////////////////////////////
 // state of the GPS light (on/off)
-static bool GPS_light;							
+static bool GPS_light;
 
 ////////////////////////////////////////////////////////////////////////////////
 // GPS variables
@@ -316,36 +314,36 @@ static bool GPS_light;
 // This is used to scale GPS values for EEPROM storage
 // 10^7 times Decimal GPS means 1 == 1cm
 // This approximation makes calculations integer and it's easy to read
-static const 	float t7			= 10000000.0;	
+static const    float t7            = 10000000.0;
 // We use atan2 and other trig techniques to calaculate angles
 
 // A counter used to count down valid gps fixes to allow the gps estimate to settle
 // before recording our home position (and executing a ground start if we booted with an air start)
-static uint8_t 	ground_start_count	= 5;
-// Used to compute a speed estimate from the first valid gps fixes to decide if we are 
+static uint8_t  ground_start_count  = 5;
+// Used to compute a speed estimate from the first valid gps fixes to decide if we are
 // on the ground or in the air.  Used to decide if a ground start is appropriate if we
 // booted with an air start.
 static int16_t     ground_start_avg;
-static int32_t          gps_base_alt;		
+static int32_t          gps_base_alt;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Location & Navigation
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
-const	float radius_of_earth 	= 6378100;	// meters
+const   float radius_of_earth   = 6378100;  // meters
 
 
 // true if we have a position estimate from AHRS
 static bool have_position;
 
-// There may be two active commands in Auto mode.  
+// There may be two active commands in Auto mode.
 // This indicates the active navigation command by index number
-static uint8_t	nav_command_index;					
+static uint8_t  nav_command_index;
 // This indicates the active non-navigation command by index number
-static uint8_t	non_nav_command_index;				
+static uint8_t  non_nav_command_index;
 // This is the command type (eg navigate to waypoint) of the active navigation command
-static uint8_t	nav_command_ID		= NO_COMMAND;	
-static uint8_t	non_nav_command_ID	= NO_COMMAND;	
+static uint8_t  nav_command_ID      = NO_COMMAND;
+static uint8_t  non_nav_command_ID  = NO_COMMAND;
 
 // receiver RSSI
 static uint8_t receiver_rssi;
@@ -360,86 +358,74 @@ static bool auto_triggered;
 // Ground speed
 ////////////////////////////////////////////////////////////////////////////////
 // The amount current ground speed is below min ground speed.  meters per second
-static float 	ground_speed = 0;
+static float    ground_speed = 0;
 static int16_t throttle_last = 0, throttle = 500;
-
-////////////////////////////////////////////////////////////////////////////////
-// CH7 control
-////////////////////////////////////////////////////////////////////////////////
-
-// Used to track the CH7 toggle state.
-// When CH7 goes LOW PWM from HIGH PWM, this value will have been set true
-// This allows advanced functionality to know when to execute
-static bool ch7_flag;
-// This register tracks the current Mission Command index when writing
-// a mission using CH7 in flight
-static int8_t CH7_wp_index;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Battery Sensors
 ////////////////////////////////////////////////////////////////////////////////
 // Battery pack 1 voltage.  Initialized above the low voltage threshold to pre-load the filter and prevent low voltage events at startup.
-static float 	battery_voltage1 	= LOW_VOLTAGE * 1.05;
+static float    battery_voltage1    = LOW_VOLTAGE * 1.05;
 // Battery pack 1 instantaneous currrent draw.  Amperes
-static float	current_amps1;
+static float    current_amps1;
 // Totalized current (Amp-hours) from battery 1
-static float	current_total1;									
+static float    current_total1;
 
 ////////////////////////////////////////////////////////////////////////////////
 // repeating event control
 ////////////////////////////////////////////////////////////////////////////////
 // Flag indicating current event type
-static uint8_t 		event_id;
+static uint8_t      event_id;
 // when the event was started in ms
-static int32_t 		event_timer;
+static int32_t      event_timer;
 // how long to delay the next firing of event in millis
-static uint16_t 	event_delay;					
+static uint16_t     event_delay;
 // how many times to cycle : -1 (or -2) = forever, 2 = do one cycle, 4 = do two cycles
-static int16_t 		event_repeat = 0;
+static int16_t      event_repeat = 0;
 // per command value, such as PWM for servos
-static int16_t 		event_value; 
+static int16_t      event_value;
 // the value used to cycle events (alternate value to event_value)
-static int16_t 		event_undo_value;
+static int16_t      event_undo_value;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Conditional command
 ////////////////////////////////////////////////////////////////////////////////
 // A value used in condition commands (eg delay, change alt, etc.)
 // For example in a change altitude command, it is the altitude to change to.
-static int32_t 	condition_value;
+static int32_t  condition_value;
 // A starting value used to check the status of a conditional command.
 // For example in a delay command the condition_start records that start time for the delay
-static int32_t 	condition_start;
+static int32_t  condition_start;
 
 ////////////////////////////////////////////////////////////////////////////////
 // 3D Location vectors
 // Location structure defined in AP_Common
 ////////////////////////////////////////////////////////////////////////////////
 // The home location used for RTL.  The location is set when we first get stable GPS lock
-static struct 	Location home;
+static struct   Location home;
 // Flag for if we have g_gps lock and have set the home location
-static bool	home_is_set;
+static bool home_is_set;
 // The location structure information from the Nav command being processed
-static struct 	Location next_nav_command;	
+static struct   Location next_nav_command;
 // The location structure information from the Non-Nav command being processed
-static struct 	Location next_nonnav_command;
+static struct   Location next_nonnav_command;
 
 ////////////////////////////////////////////////////////////////////////////////
 // IMU variables
 ////////////////////////////////////////////////////////////////////////////////
 // The main loop execution time.  Seconds
 //This is the time between calls to the DCM algorithm and is the Integration time for the gyros.
-static float G_Dt						= 0.02;		
+static float G_Dt                       = 0.02;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Performance monitoring
 ////////////////////////////////////////////////////////////////////////////////
 // Timer used to accrue data and trigger recording of the performanc monitoring log message
-static int32_t 	perf_mon_timer;
+static int32_t  perf_mon_timer;
 // The maximum main loop execution time recorded in the current performance monitoring interval
-static int16_t 	G_Dt_max = 0;
+static int16_t  G_Dt_max = 0;
 // The number of gps fixes recorded in the current performance monitoring interval
-static uint8_t 	gps_fix_count = 0;
+static uint8_t  gps_fix_count = 0;
 // A variable used by developers to track performanc metrics.
 // Currently used to record the number of GCS heartbeat messages received
 static int16_t pmTest1 = 0;
@@ -449,16 +435,16 @@ static int16_t pmTest1 = 0;
 // System Timers
 ////////////////////////////////////////////////////////////////////////////////
 // Time in miliseconds of start of main control loop.  Milliseconds
-static uint32_t 	fast_loopTimer;
+static uint32_t     fast_loopTimer;
 // Time Stamp when fast loop was complete.  Milliseconds
-static uint32_t 	fast_loopTimeStamp;
+static uint32_t     fast_loopTimeStamp;
 // Number of milliseconds used in last main loop cycle
-static uint8_t 		delta_ms_fast_loop;
+static uint8_t      delta_ms_fast_loop;
 // Counter of main loop executions.  Used for performance monitoring and failsafe processing
-static uint16_t			mainLoop_count;
+static uint16_t         mainLoop_count;
 
 // % MCU cycles used
-static float 			load;
+static float            load;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Top-level logic
@@ -491,7 +477,7 @@ static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
   setup is called when the sketch starts
  */
 void setup() {
-	memcheck_init();
+    memcheck_init();
     cliSerial = hal.console;
 
     // load the default values of variables listed in var_info[]
@@ -502,10 +488,10 @@ void setup() {
     batt_volt_pin = hal.analogin->channel(g.battery_volt_pin);
     batt_curr_pin = hal.analogin->channel(g.battery_curr_pin);
 
-	init_ardupilot();
+    init_ardupilot();
 
     // initialise the main loop scheduler
-    scheduler.init(&scheduler_tasks[0], sizeof(scheduler_tasks)/sizeof(scheduler_tasks[0]));
+    scheduler.init(&scheduler_tasks[0], sizeof(scheduler_tasks) / sizeof(scheduler_tasks[0]));
 }
 
 /*
@@ -518,20 +504,20 @@ void loop()
     // We want this to execute at 50Hz, but synchronised with the gyro/accel
     uint16_t num_samples = ins.num_samples_available();
     if (num_samples >= 1) {
-		delta_ms_fast_loop	= timer - fast_loopTimer;
-		load                = (float)(fast_loopTimeStamp - fast_loopTimer)/delta_ms_fast_loop;
-		G_Dt                = (float)delta_ms_fast_loop / 1000.f;
-		fast_loopTimer      = timer;
+        delta_ms_fast_loop  = timer - fast_loopTimer;
+        load                = (float)(fast_loopTimeStamp - fast_loopTimer) / delta_ms_fast_loop;
+        G_Dt                = (float)delta_ms_fast_loop / 1000.f;
+        fast_loopTimer      = timer;
 
-		mainLoop_count++;
+        mainLoop_count++;
 
-		// Execute the fast loop
-		// ---------------------
-		fast_loop();
+        // Execute the fast loop
+        // ---------------------
+        fast_loop();
 
         // tell the scheduler one tick has passed
         scheduler.tick();
-		fast_loopTimeStamp = millis();
+        fast_loopTimeStamp = millis();
     } else {
         uint16_t dt = timer - fast_loopTimer;
         if (dt < 20) {
@@ -544,25 +530,25 @@ void loop()
 // Main loop 50Hz
 static void fast_loop()
 {
-	// This is the fast loop - we want it to execute at 50Hz if possible
-	// -----------------------------------------------------------------
-	if (delta_ms_fast_loop > G_Dt_max)
-		G_Dt_max = delta_ms_fast_loop;
+    // This is the fast loop - we want it to execute at 50Hz if possible
+    // -----------------------------------------------------------------
+    if (delta_ms_fast_loop > G_Dt_max)
+        G_Dt_max = delta_ms_fast_loop;
 
-	// Read radio
-	// ----------
-	read_radio();
+    // Read radio
+    // ----------
+    read_radio();
 
     // try to send any deferred messages if the serial port now has
     // some space available
     gcs_send_message(MSG_RETRY_DEFERRED);
 
-	#if HIL_MODE != HIL_MODE_DISABLED
-		// update hil before dcm update
-		gcs_update();
-	#endif
+#if HIL_MODE != HIL_MODE_DISABLED
+    // update hil before dcm update
+    gcs_update();
+#endif
 
-	ahrs.update();
+    ahrs.update();
 
     if (g.log_bitmask & MASK_LOG_ATTITUDE_FAST)
         Log_Write_Attitude();
@@ -570,9 +556,9 @@ static void fast_loop()
     if (g.log_bitmask & MASK_LOG_IMU)
         DataFlash.Log_Write_IMU(&ins);
 
-	// write out the servo PWM values
-	// ------------------------------
-	set_servos();
+    // write out the servo PWM values
+    // ------------------------------
+    set_servos();
 
     gcs_update();
     gcs_data_stream_send();
@@ -593,7 +579,7 @@ static void compass_accumulate(void)
 {
     if (g.compass_enabled) {
         compass.accumulate();
-    }    
+    }
 }
 
 /*
@@ -620,7 +606,7 @@ static void update_logging(void)
 {
     if ((g.log_bitmask & MASK_LOG_ATTITUDE_MED) && !(g.log_bitmask & MASK_LOG_ATTITUDE_FAST))
         Log_Write_Attitude();
-    
+
     if (g.log_bitmask & MASK_LOG_CTUN)
         Log_Write_Control_Tuning();
 }
@@ -647,10 +633,10 @@ static void update_aux(void)
  */
 static void one_second_loop(void)
 {
-	if (g.log_bitmask & MASK_LOG_CURRENT)
-		Log_Write_Current();
-	// send a heartbeat
-	gcs_send_message(MSG_HEARTBEAT);
+    if (g.log_bitmask & MASK_LOG_CURRENT)
+        Log_Write_Current();
+    // send a heartbeat
+    gcs_send_message(MSG_HEARTBEAT);
 
     // allow orientation change at runtime to aid config
     ahrs.set_orientation();
@@ -675,7 +661,7 @@ static void one_second_loop(void)
     }
 
     // save compass offsets once a minute
-    if (counter >= 60) {				
+    if (counter >= 60) {
         if (g.compass_enabled) {
             compass.save_offsets();
         }
@@ -684,10 +670,10 @@ static void one_second_loop(void)
 }
 
 static void update_GPS(void)
-{        
+{
     static uint32_t last_gps_reading;
-	g_gps->update();
-	update_GPS_light();
+    g_gps->update();
+    update_GPS_light();
 
     if (g_gps->last_message_time_ms() != last_gps_reading) {
         last_gps_reading = g_gps->last_message_time_ms();
@@ -698,32 +684,32 @@ static void update_GPS(void)
 
     have_position = ahrs.get_projected_position(&current_loc);
 
-	if (g_gps->new_data && g_gps->status() >= GPS::GPS_OK_FIX_3D) {
-		gps_fix_count++;
+    if (g_gps->new_data && g_gps->status() >= GPS::GPS_OK_FIX_3D) {
+        gps_fix_count++;
 
-		if(ground_start_count > 1){
-			ground_start_count--;
-			ground_start_avg += g_gps->ground_speed_cm;
+        if (ground_start_count > 1) {
+            ground_start_count--;
+            ground_start_avg += g_gps->ground_speed_cm;
 
-		} else if (ground_start_count == 1) {
-			// We countdown N number of good GPS fixes
-			// so that the altitude is more accurate
-			// -------------------------------------
-			if (current_loc.lat == 0) {
-				ground_start_count = 5;
+        } else if (ground_start_count == 1) {
+            // We countdown N number of good GPS fixes
+            // so that the altitude is more accurate
+            // -------------------------------------
+            if (current_loc.lat == 0) {
+                ground_start_count = 5;
 
-			} else {
+            } else {
                 init_home();
-				if (g.compass_enabled) {
-					// Set compass declination automatically
-					compass.set_initial_location(g_gps->latitude, g_gps->longitude);
-				}
-				ground_start_count = 0;
-			}
-		}
+                if (g.compass_enabled) {
+                    // Set compass declination automatically
+                    compass.set_initial_location(g_gps->latitude, g_gps->longitude);
+                }
+                ground_start_count = 0;
+            }
+        }
         ground_speed   = g_gps->ground_speed_cm * 0.01;
 
-	}
+    }
 }
 
 /*****************************************
@@ -732,34 +718,45 @@ static void update_GPS(void)
 static void set_servos(void)
 {
 
-    // JTM_TODO
+    switch(control_mode)
+    {
+        case MANUAL:
+            set_servos_manual();
+            break;
+        case AUTO:
+            set_servos_auto();
+            break;
+        case HOLD:
+        case LEARNING:
+        case STEERING:
+        case RTL:
+        default:
+            set_servos_safe();
+            break;
+    }
 
-#if HIL_MODE == HIL_MODE_DISABLED || HIL_SERVOS
-    // send values to the PWM timers for output
-    // ----------------------------------------
-    channel_steer->output(); 
-    channel_throttle->output();
-
-    // Route configurable aux. functions to their respective servos
-    g.rc_2.output_ch(CH_2);
-    g.rc_4.output_ch(CH_4);
-    g.rc_5.output_ch(CH_5);
-    g.rc_6.output_ch(CH_6);
-    g.rc_7.output_ch(CH_7);
-    g.rc_8.output_ch(CH_8);
- #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
-    g.rc_9.output_ch(CH_9);
- #endif
- #if CONFIG_HAL_BOARD == HAL_BOARD_APM2 || CONFIG_HAL_BOARD == HAL_BOARD_PX4
-    g.rc_10.output_ch(CH_10);
-    g.rc_11.output_ch(CH_11);
- #endif
- #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
-    g.rc_12.output_ch(CH_12);
- #endif
-
-#endif
 }
 
+
+static void set_servos_manual(void)
+{
+
+    // JTM_TODO
+    set_servos_safe();
+}
+
+static void set_servos_auto(void)
+{
+
+    // JTM_TODO
+    set_servos_safe();
+}
+
+static void set_servos_safe(void)
+{
+    // JTM_TODO
+    set_steering(-1);
+    set_throttle(0);
+}
 
 AP_HAL_MAIN();

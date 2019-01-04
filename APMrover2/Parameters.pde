@@ -37,7 +37,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver. Usuallly used in combination with when AUTO_TRIGGER_PIN or AUTO_KICKSTART.
     // @Values: 0:MANUAL,2:LEARNING,3:STEERING,4:HOLD,10:AUTO,11:RTL,15:GUIDED
     // @User: Advanced
-	GSCALAR(initial_mode,        "INITIAL_MODE",     MANUAL),
+	GSCALAR(initial_mode,        "INITIAL_MODE",     HOLD),
 
     // @Param: RSSI_PIN
     // @DisplayName: Receiver RSSI sensing pin
@@ -51,14 +51,14 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Description: Setting this to 0 ~ 13 will enable battery current sensing on pins A0 ~ A13. For the 3DR power brick on APM2.5 it should be set to 13. On the PX4 it should be set to 100.
     // @Values: -1:Disabled, 0:A0, 1:A1, 13:A13, 100:PX4
     // @User: Standard
-    GSCALAR(battery_volt_pin,    "BATT_VOLT_PIN",    1),
+    GSCALAR(battery_volt_pin,    "BATT_VOLT_PIN",    -1),
 
     // @Param: BATT_CURR_PIN
     // @DisplayName: Battery Current sensing pin
     // @Description: Setting this to 0 ~ 13 will enable battery current sensing on pins A0 ~ A13. For the 3DR power brick on APM2.5 it should be set to 12. On the PX4 it should be set to 101. 
     // @Values: -1:Disabled, 1:A1, 2:A2, 12:A12, 101:PX4
     // @User: Standard
-    GSCALAR(battery_curr_pin,    "BATT_CURR_PIN",    2),
+    GSCALAR(battery_curr_pin,    "BATT_CURR_PIN",    -1),
 
     // @Param: SYSID_THIS_MAV
     // @DisplayName: MAVLink system ID

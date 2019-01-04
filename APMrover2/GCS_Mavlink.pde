@@ -558,6 +558,11 @@ static bool mavlink_try_send_message(mavlink_channel_t chan, enum ap_message id,
         send_hwstatus(chan);
         break;
 
+    case MSG_RANGEFINDER:
+        CHECK_PAYLOAD_SIZE(RANGEFINDER);
+        // do nothing
+        break;
+
     case MSG_RETRY_DEFERRED:
         break; // just here to prevent a warning
 	}
