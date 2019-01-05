@@ -24,7 +24,7 @@ public:
         // Layout version number, always key zero.
         //
         k_param_format_version = 0,
-		k_param_software_type,
+        k_param_software_type,
 
         // Misc
         //
@@ -144,13 +144,13 @@ public:
         };
 
     AP_Int16    format_version;
-	AP_Int8	    software_type;
+    AP_Int8     software_type;
 
     // Misc
     //
     AP_Int16    log_bitmask;
     AP_Int16    num_resets;
-    AP_Int8	    reset_switch_chan;
+    AP_Int8     reset_switch_chan;
     AP_Int8     initial_mode;
 
     // IO pins
@@ -158,22 +158,22 @@ public:
     AP_Int8     battery_volt_pin;
     AP_Int8     battery_curr_pin;
 
-	// Telemetry control
-	//
-	AP_Int16    sysid_this_mav;
-	AP_Int16    sysid_my_gcs;
-    AP_Int8	    serial0_baud;
-    AP_Int8	    serial3_baud;
+    // Telemetry control
+    //
+    AP_Int16    sysid_this_mav;
+    AP_Int16    sysid_my_gcs;
+    AP_Int8     serial0_baud;
+    AP_Int8     serial3_baud;
     AP_Int8     telem_delay;
 
     // sensor parameters
-    AP_Int8	    compass_enabled;
+    AP_Int8     compass_enabled;
 
     // battery controls
-    AP_Int8	    battery_monitoring;	// 0=disabled, 3=voltage only, 4=voltage and current
+    AP_Int8     battery_monitoring; // 0=disabled, 3=voltage only, 4=voltage and current
     AP_Float    volt_div_ratio;
     AP_Float    curr_amp_per_volt;
-    AP_Int16    pack_capacity;		// Battery pack capacity less reserve    
+    AP_Int16    pack_capacity;      // Battery pack capacity less reserve    
 
     // navigation parameters
     //
@@ -182,19 +182,19 @@ public:
     AP_Float    speed_cruise;
     AP_Int8     speed_turn_gain;
     AP_Float    speed_turn_dist;    
-    AP_Int8	    ch7_option;
+    AP_Int8     ch7_option;
     AP_Int8     auto_trigger_pin;
     AP_Float    auto_kickstart;
 
     // RC channels
     RC_Channel      rc_1;
-    RC_Channel_aux	rc_2;
+    RC_Channel_aux  rc_2;
     RC_Channel      rc_3;
     RC_Channel_aux  rc_4;
-    RC_Channel_aux	rc_5;
-    RC_Channel_aux	rc_6;
-    RC_Channel_aux	rc_7;
-    RC_Channel_aux	rc_8;
+    RC_Channel_aux  rc_5;
+    RC_Channel_aux  rc_6;
+    RC_Channel_aux  rc_7;
+    RC_Channel_aux  rc_8;
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
     RC_Channel_aux rc_9;
 #endif
@@ -218,7 +218,7 @@ public:
     AP_Float    fs_timeout;
     AP_Int8     fs_throttle_enabled;
     AP_Int16    fs_throttle_value;
-	AP_Int8	    fs_gcs_enabled;
+    AP_Int8     fs_gcs_enabled;
 
     // driving modes
     //

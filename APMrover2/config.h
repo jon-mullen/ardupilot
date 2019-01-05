@@ -45,8 +45,8 @@
 #endif
 
 // Just so that it's completely clear...
-#define ENABLED			1
-#define DISABLED		0
+#define ENABLED         1
+#define DISABLED        0
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -68,8 +68,8 @@
 # define SLIDE_SWITCH_PIN 40
 # define PUSHBUTTON_PIN   41
 # define USB_MUX_PIN      -1
-# define BATTERY_PIN_1	  0
-# define CURRENT_PIN_1	  1
+# define BATTERY_PIN_1    0
+# define CURRENT_PIN_1    1
 #elif CONFIG_HAL_BOARD == HAL_BOARD_APM2
 # define CONFIG_INS_TYPE   CONFIG_INS_MPU6000
 # define CONFIG_COMPASS  AP_COMPASS_HMC5843
@@ -83,8 +83,8 @@
 # define PUSHBUTTON_PIN   (-1)
 # define CLI_SLIDER_ENABLED DISABLED
 # define USB_MUX_PIN 23
-# define BATTERY_PIN_1	  1
-# define CURRENT_PIN_1	  2
+# define BATTERY_PIN_1    1
+# define CURRENT_PIN_1    2
 #elif CONFIG_HAL_BOARD == HAL_BOARD_AVR_SITL
 # define CONFIG_INS_TYPE CONFIG_INS_STUB
 # define CONFIG_COMPASS  AP_COMPASS_HIL
@@ -98,8 +98,8 @@
 # define PUSHBUTTON_PIN   (-1)
 # define CLI_SLIDER_ENABLED DISABLED
 # define USB_MUX_PIN -1
-# define BATTERY_PIN_1	  1
-# define CURRENT_PIN_1	  2
+# define BATTERY_PIN_1    1
+# define CURRENT_PIN_1    2
 #elif CONFIG_HAL_BOARD == HAL_BOARD_PX4
 # define CONFIG_INS_TYPE   CONFIG_INS_PX4
 # define CONFIG_COMPASS  AP_COMPASS_PX4
@@ -113,8 +113,8 @@
 # define PUSHBUTTON_PIN   (-1)
 # define CLI_SLIDER_ENABLED DISABLED
 # define USB_MUX_PIN -1
-# define BATTERY_PIN_1	  -1
-# define CURRENT_PIN_1	  -1
+# define BATTERY_PIN_1    -1
+# define CURRENT_PIN_1    -1
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@
 // HIL_MODE                                 OPTIONAL
 
 #ifndef HIL_MODE
-#define HIL_MODE	HIL_MODE_DISABLED
+#define HIL_MODE    HIL_MODE_DISABLED
 #endif
 
 #if HIL_MODE != HIL_MODE_DISABLED       // we are in HIL mode
@@ -151,62 +151,62 @@
 #endif
 
 #ifndef MAV_SYSTEM_ID
-# define MAV_SYSTEM_ID		1
+# define MAV_SYSTEM_ID      1
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Serial port speeds.
 //
 #ifndef SERIAL0_BAUD
-# define SERIAL0_BAUD			115200
+# define SERIAL0_BAUD           115200
 #endif
 #ifndef SERIAL3_BAUD
-# define SERIAL3_BAUD			 57600
+# define SERIAL3_BAUD            57600
 #endif
 
 #ifndef CH7_OPTION
-# define CH7_OPTION		          CH7_SAVE_WP
+# define CH7_OPTION               CH7_SAVE_WP
 #endif
 
 #ifndef TUNING_OPTION
-# define TUNING_OPTION		          TUN_NONE
+# define TUNING_OPTION                TUN_NONE
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Battery monitoring
 //
 #ifndef BATTERY_EVENT
-# define BATTERY_EVENT			DISABLED
+# define BATTERY_EVENT          DISABLED
 #endif
 #ifndef LOW_VOLTAGE
-# define LOW_VOLTAGE			9.6
+# define LOW_VOLTAGE            9.6
 #endif
 #ifndef VOLT_DIV_RATIO
-# define VOLT_DIV_RATIO			3.56	// This is the proper value for an on-board APM1 voltage divider with a 3.9kOhm resistor
+# define VOLT_DIV_RATIO         3.56    // This is the proper value for an on-board APM1 voltage divider with a 3.9kOhm resistor
 #endif
 
 #ifndef CURR_AMP_PER_VOLT
-# define CURR_AMP_PER_VOLT		27.32	// This is the proper value for the AttoPilot 50V/90A sensor
+# define CURR_AMP_PER_VOLT      27.32   // This is the proper value for the AttoPilot 50V/90A sensor
 #endif
 
 #ifndef CURR_AMPS_OFFSET
-# define CURR_AMPS_OFFSET		0.0
+# define CURR_AMPS_OFFSET       0.0
 #endif
 #ifndef HIGH_DISCHARGE
-# define HIGH_DISCHARGE		1760
+# define HIGH_DISCHARGE     1760
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // INPUT_VOLTAGE
 //
 #ifndef INPUT_VOLTAGE
-# define INPUT_VOLTAGE			4.68	//  4.68 is the average value for a sample set.  This is the value at the processor with 5.02 applied at the servo rail
+# define INPUT_VOLTAGE          4.68    //  4.68 is the average value for a sample set.  This is the value at the processor with 5.02 applied at the servo rail
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 //  MAGNETOMETER
 #ifndef MAGNETOMETER
-# define MAGNETOMETER			ENABLED
+# define MAGNETOMETER           ENABLED
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@
 // MODE_CHANNEL
 //
 #ifndef MODE_CHANNEL
-# define MODE_CHANNEL	8
+# define MODE_CHANNEL   8
 #endif
 #if (MODE_CHANNEL != 5) && (MODE_CHANNEL != 6) && (MODE_CHANNEL != 7) && (MODE_CHANNEL != 8)
 # error XXX
@@ -223,38 +223,38 @@
 #endif
 
 #if !defined(MODE_1)
-# define MODE_1			LEARNING
+# define MODE_1         LEARNING
 #endif
 #if !defined(MODE_2)
-# define MODE_2			LEARNING
+# define MODE_2         LEARNING
 #endif
 #if !defined(MODE_3)
-# define MODE_3			LEARNING
+# define MODE_3         LEARNING
 #endif
 #if !defined(MODE_4)
-# define MODE_4			LEARNING
+# define MODE_4         LEARNING
 #endif
 #if !defined(MODE_5)
-# define MODE_5			LEARNING
+# define MODE_5         LEARNING
 #endif
 #if !defined(MODE_6)
-# define MODE_6			MANUAL
+# define MODE_6         MANUAL
 #endif
 
 
 //////////////////////////////////////////////////////////////////////////////
 // failsafe defaults
 #ifndef THROTTLE_FAILSAFE
-# define THROTTLE_FAILSAFE		ENABLED
+# define THROTTLE_FAILSAFE      ENABLED
 #endif
 #ifndef THROTTLE_FS_VALUE
-# define THROTTLE_FS_VALUE		950
+# define THROTTLE_FS_VALUE      950
 #endif
 #ifndef LONG_FAILSAFE_ACTION
-# define LONG_FAILSAFE_ACTION		0
+# define LONG_FAILSAFE_ACTION       0
 #endif
 #ifndef GCS_HEARTBEAT_FAILSAFE
-# define GCS_HEARTBEAT_FAILSAFE		DISABLED
+# define GCS_HEARTBEAT_FAILSAFE     DISABLED
 #endif
 
 
@@ -262,7 +262,7 @@
 // THROTTLE_OUT
 //
 #ifndef THROTTE_OUT
-# define THROTTLE_OUT			ENABLED
+# define THROTTLE_OUT           ENABLED
 #endif
 
 
@@ -276,14 +276,14 @@
 // GROUND_START_DELAY
 //
 #ifndef GROUND_START_DELAY
-# define GROUND_START_DELAY		0
+# define GROUND_START_DELAY     0
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // MOUNT (ANTENNA OR CAMERA)
 //
 #ifndef MOUNT
-# define MOUNT		ENABLED
+# define MOUNT      ENABLED
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -297,38 +297,38 @@
 // AIRSPEED_CRUISE
 //
 #ifndef SPEED_CRUISE
-# define SPEED_CRUISE		3 // 3 m/s
+# define SPEED_CRUISE       3 // 3 m/s
 #endif
 
 #ifndef GSBOOST
-# define GSBOOST		0
+# define GSBOOST        0
 #endif
 #ifndef GSBOOST
-# define GSBOOST		0
+# define GSBOOST        0
 #endif
 #ifndef NUDGE_OFFSET
-# define NUDGE_OFFSET		0
+# define NUDGE_OFFSET       0
 #endif
 
 #ifndef E_GLIDER
-# define E_GLIDER		ENABLED
+# define E_GLIDER       ENABLED
 #endif
 
 #ifndef TURN_GAIN
-# define TURN_GAIN		5
+# define TURN_GAIN      5
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Servo Mapping
 //
 #ifndef THROTTLE_MIN
-# define THROTTLE_MIN			0 // percent
+# define THROTTLE_MIN           0 // percent
 #endif
 #ifndef THROTTLE_CRUISE
-# define THROTTLE_CRUISE		45
+# define THROTTLE_CRUISE        45
 #endif
 #ifndef THROTTLE_MAX
-# define THROTTLE_MAX			100
+# define THROTTLE_MAX           100
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -365,7 +365,7 @@
 // Dataflash logging control
 //
 #ifndef LOGGING_ENABLED
-# define LOGGING_ENABLED		ENABLED
+# define LOGGING_ENABLED        ENABLED
 #endif
 
 #define DEFAULT_LOG_BITMASK     \
@@ -388,7 +388,7 @@
 //
 
 #ifndef STANDARD_SPEED
-# define STANDARD_SPEED		3.0
+# define STANDARD_SPEED     3.0
 #define STANDARD_SPEED_SQUARED (STANDARD_SPEED * STANDARD_SPEED)
 #endif
 #define STANDARD_THROTTLE_SQUARED (THROTTLE_CRUISE * THROTTLE_CRUISE)

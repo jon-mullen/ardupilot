@@ -14,30 +14,30 @@
 #define GOBJECT(v, name, class) { AP_PARAM_GROUP, name, Parameters::k_param_ ## v, &v, {group_info:class::var_info} }
 
 const AP_Param::Info var_info[] PROGMEM = {
-	GSCALAR(format_version,         "FORMAT_VERSION",   1),
-	GSCALAR(software_type,          "SYSID_SW_TYPE",    Parameters::k_software_type),
+    GSCALAR(format_version,         "FORMAT_VERSION",   1),
+    GSCALAR(software_type,          "SYSID_SW_TYPE",    Parameters::k_software_type),
 
-	// misc
+    // misc
     // @Param: LOG_BITMASK
     // @DisplayName: Log bitmask
     // @Description: Two byte bitmap of log types to enable in dataflash
     // @Values: 0:Disabled,3950:Default,4078:Default+IMU
     // @User: Advanced
-	GSCALAR(log_bitmask,            "LOG_BITMASK",      DEFAULT_LOG_BITMASK),
-	GSCALAR(num_resets,             "SYS_NUM_RESETS",   0),
+    GSCALAR(log_bitmask,            "LOG_BITMASK",      DEFAULT_LOG_BITMASK),
+    GSCALAR(num_resets,             "SYS_NUM_RESETS",   0),
 
     // @Param: RST_SWITCH_CH
     // @DisplayName: Reset Switch Channel
-    // @Description: RC channel to use to reset to last flight mode	after geofence takeover.
+    // @Description: RC channel to use to reset to last flight mode after geofence takeover.
     // @User: Advanced
-	GSCALAR(reset_switch_chan,      "RST_SWITCH_CH",    0),
+    GSCALAR(reset_switch_chan,      "RST_SWITCH_CH",    0),
 
     // @Param: INITIAL_MODE
     // @DisplayName: Initial driving mode
     // @Description: This selects the mode to start in on boot. This is useful for when you want to start in AUTO mode on boot without a receiver. Usuallly used in combination with when AUTO_TRIGGER_PIN or AUTO_KICKSTART.
     // @Values: 0:MANUAL,2:LEARNING,3:STEERING,4:HOLD,10:AUTO,11:RTL,15:GUIDED
     // @User: Advanced
-	GSCALAR(initial_mode,        "INITIAL_MODE",     HOLD),
+    GSCALAR(initial_mode,        "INITIAL_MODE",     HOLD),
 
     // @Param: RSSI_PIN
     // @DisplayName: Receiver RSSI sensing pin
@@ -64,27 +64,27 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @DisplayName: MAVLink system ID
     // @Description: ID used in MAVLink protocol to identify this vehicle
     // @User: Advanced
-	GSCALAR(sysid_this_mav,         "SYSID_THISMAV",    MAV_SYSTEM_ID),
+    GSCALAR(sysid_this_mav,         "SYSID_THISMAV",    MAV_SYSTEM_ID),
 
     // @Param: SYSID_MYGCS
     // @DisplayName: MAVLink ground station ID
     // @Description: ID used in MAVLink protocol to identify the controlling ground station
     // @User: Advanced
-	GSCALAR(sysid_my_gcs,           "SYSID_MYGCS",      255),
+    GSCALAR(sysid_my_gcs,           "SYSID_MYGCS",      255),
 
     // @Param: SERIAL0_BAUD
     // @DisplayName: USB Console Baud Rate
     // @Description: The baud rate used on the first serial port
     // @Values: 1:1200,2:2400,4:4800,9:9600,19:19200,38:38400,57:57600,111:111100,115:115200
     // @User: Standard
-	GSCALAR(serial0_baud,           "SERIAL0_BAUD",     SERIAL0_BAUD/1000),
+    GSCALAR(serial0_baud,           "SERIAL0_BAUD",     SERIAL0_BAUD/1000),
 
     // @Param: SERIAL3_BAUD
     // @DisplayName: Telemetry Baud Rate
     // @Description: The baud rate used on the telemetry port
     // @Values: 1:1200,2:2400,4:4800,9:9600,19:19200,38:38400,57:57600,111:111100,115:115200
     // @User: Standard
-	GSCALAR(serial3_baud,           "SERIAL3_BAUD",     SERIAL3_BAUD/1000),
+    GSCALAR(serial3_baud,           "SERIAL3_BAUD",     SERIAL3_BAUD/1000),
 
     // @Param: TELEM_DELAY
     // @DisplayName: Telemetry startup delay 
@@ -100,33 +100,33 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Description: This should be set to 1 if a compass is installed
     // @User: Standard
     // @Values: 0:Disabled,1:Enabled
-	GSCALAR(compass_enabled,        "MAG_ENABLE",       MAGNETOMETER),
+    GSCALAR(compass_enabled,        "MAG_ENABLE",       MAGNETOMETER),
 
     // @Param: BATT_MONITOR
     // @DisplayName: Battery monitoring
     // @Description: Controls enabling monitoring of the battery's voltage and current
     // @Values: 0:Disabled,3:Voltage Only,4:Voltage and Current
     // @User: Standard
-	GSCALAR(battery_monitoring,     "BATT_MONITOR",     DISABLED),
+    GSCALAR(battery_monitoring,     "BATT_MONITOR",     DISABLED),
 
     // @Param: VOLT_DIVIDER
     // @DisplayName: Voltage Divider
     // @Description: Used to convert the voltage of the voltage sensing pin (BATT_VOLT_PIN) to the actual battery's voltage (pin_voltage * VOLT_DIVIDER). For the 3DR Power brick, this should be set to 10.1. For the PX4 using the PX4IO power supply this should be set to 1.
     // @User: Advanced
-	GSCALAR(volt_div_ratio,         "VOLT_DIVIDER",     VOLT_DIV_RATIO),
+    GSCALAR(volt_div_ratio,         "VOLT_DIVIDER",     VOLT_DIV_RATIO),
 
     // @Param: AMP_PER_VOLT
     // @DisplayName: Current Amps per volt
     // @Description: Used to convert the voltage on the current sensing pin (BATT_CURR_PIN) to the actual current being consumed in amps (curr pin voltage * INPUT_VOLTS/1024 * AMP_PER_VOLT )
     // @User: Advanced
-	GSCALAR(curr_amp_per_volt,      "AMP_PER_VOLT",     CURR_AMP_PER_VOLT),
+    GSCALAR(curr_amp_per_volt,      "AMP_PER_VOLT",     CURR_AMP_PER_VOLT),
 
     // @Param: BATT_CAPACITY
     // @DisplayName: Battery Capacity
     // @Description: Battery capacity in milliamp-hours (mAh)
     // @Units: mAh
-	// @User: Standard
-	GSCALAR(pack_capacity,          "BATT_CAPACITY",    HIGH_DISCHARGE),
+    // @User: Standard
+    GSCALAR(pack_capacity,          "BATT_CAPACITY",    HIGH_DISCHARGE),
 
     // @Param: XTRK_GAIN_SC
     // @DisplayName: Crosstrack Gain
@@ -134,7 +134,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 2000
     // @Increment: 1
     // @User: Standard
-	GSCALAR(crosstrack_gain,        "XTRK_GAIN_SC",     XTRACK_GAIN_SCALED),
+    GSCALAR(crosstrack_gain,        "XTRK_GAIN_SC",     XTRACK_GAIN_SCALED),
 
     // @Param: XTRK_ANGLE_CD
     // @DisplayName: Crosstrack Entry Angle
@@ -143,23 +143,23 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 9000
     // @Increment: 1
     // @User: Standard
-	GSCALAR(crosstrack_entry_angle, "XTRK_ANGLE_CD",    XTRACK_ENTRY_ANGLE_CENTIDEGREE),
+    GSCALAR(crosstrack_entry_angle, "XTRK_ANGLE_CD",    XTRACK_ENTRY_ANGLE_CENTIDEGREE),
 
-	// @Param: AUTO_TRIGGER_PIN
-	// @DisplayName: Auto mode trigger pin
-	// @Description: pin number to use to enable the throttle in auto mode. If set to -1 then don't use a trigger, otherwise this is a pin number which if held low in auto mode will enable the motor to run. If the switch is released while in AUTO then the motor will stop again. This can be used in combination with INITIAL_MODE to give a 'press button to start' rover with no receiver.
-	// @Values: -1:Disabled,0-8:TiggerPin
-	// @User: standard
-	GSCALAR(auto_trigger_pin,        "AUTO_TRIGGER_PIN", -1),
+    // @Param: AUTO_TRIGGER_PIN
+    // @DisplayName: Auto mode trigger pin
+    // @Description: pin number to use to enable the throttle in auto mode. If set to -1 then don't use a trigger, otherwise this is a pin number which if held low in auto mode will enable the motor to run. If the switch is released while in AUTO then the motor will stop again. This can be used in combination with INITIAL_MODE to give a 'press button to start' rover with no receiver.
+    // @Values: -1:Disabled,0-8:TiggerPin
+    // @User: standard
+    GSCALAR(auto_trigger_pin,        "AUTO_TRIGGER_PIN", -1),
 
-	// @Param: AUTO_KICKSTART
-	// @DisplayName: Auto mode trigger kickstart acceleration
-	// @Description: X acceleration in meters/second/second to use to trigger the motor start in auto mode. If set to zero then auto throttle starts immediately when the mode switch happens, otherwise the rover waits for the X acceleration to go above this value before it will start the motor
-	// @Units: m/s/s
-	// @Range: 0 20
-	// @Increment: 0.1
-	// @User: standard
-	GSCALAR(auto_kickstart,          "AUTO_KICKSTART", 0.0f),
+    // @Param: AUTO_KICKSTART
+    // @DisplayName: Auto mode trigger kickstart acceleration
+    // @Description: X acceleration in meters/second/second to use to trigger the motor start in auto mode. If set to zero then auto throttle starts immediately when the mode switch happens, otherwise the rover waits for the X acceleration to go above this value before it will start the motor
+    // @Units: m/s/s
+    // @Range: 0 20
+    // @Increment: 0.1
+    // @User: standard
+    GSCALAR(auto_kickstart,          "AUTO_KICKSTART", 0.0f),
 
     // @Param: CRUISE_SPEED
     // @DisplayName: Target cruise speed in auto modes
@@ -168,7 +168,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 100
     // @Increment: 0.1
     // @User: Standard
-	GSCALAR(speed_cruise,        "CRUISE_SPEED",    5),
+    GSCALAR(speed_cruise,        "CRUISE_SPEED",    5),
 
     // @Param: SPEED_TURN_GAIN
     // @DisplayName: Target speed reduction while turning
@@ -177,7 +177,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-	GSCALAR(speed_turn_gain,    "SPEED_TURN_GAIN",  50),
+    GSCALAR(speed_turn_gain,    "SPEED_TURN_GAIN",  50),
 
     // @Param: SPEED_TURN_DIST
     // @DisplayName: Distance to turn to start reducing speed
@@ -186,46 +186,46 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 100
     // @Increment: 0.1
     // @User: Standard
-	GSCALAR(speed_turn_dist,    "SPEED_TURN_DIST",  2.0f),
+    GSCALAR(speed_turn_dist,    "SPEED_TURN_DIST",  2.0f),
 
     // @Param: CH7_OPTION
     // @DisplayName: Channel 7 option
     // @Description: What to do use channel 7 for
     // @Values: 0:Nothing,1:LearnWaypoint
     // @User: Standard
-	GSCALAR(ch7_option,             "CH7_OPTION",          CH7_OPTION),
+    GSCALAR(ch7_option,             "CH7_OPTION",          CH7_OPTION),
 
     // @Group: RC1_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_1,                    "RC1_", RC_Channel),
+    GGROUP(rc_1,                    "RC1_", RC_Channel),
 
     // @Group: RC2_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_2,                    "RC2_", RC_Channel_aux),
+    GGROUP(rc_2,                    "RC2_", RC_Channel_aux),
 
     // @Group: RC3_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_3,                    "RC3_", RC_Channel),
+    GGROUP(rc_3,                    "RC3_", RC_Channel),
 
     // @Group: RC4_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_4,                    "RC4_", RC_Channel_aux),
+    GGROUP(rc_4,                    "RC4_", RC_Channel_aux),
 
     // @Group: RC5_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_5,                    "RC5_", RC_Channel_aux),
+    GGROUP(rc_5,                    "RC5_", RC_Channel_aux),
 
     // @Group: RC6_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_6,                    "RC6_", RC_Channel_aux),
+    GGROUP(rc_6,                    "RC6_", RC_Channel_aux),
 
     // @Group: RC7_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_7,                    "RC7_", RC_Channel_aux),
+    GGROUP(rc_7,                    "RC7_", RC_Channel_aux),
 
     // @Group: RC8_
     // @Path: ../libraries/RC_Channel/RC_Channel.cpp
-	GGROUP(rc_8,                    "RC8_", RC_Channel_aux),
+    GGROUP(rc_8,                    "RC8_", RC_Channel_aux),
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_PX4
     // @Group: RC9_
@@ -256,7 +256,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-	GSCALAR(throttle_min,           "THR_MIN",          THROTTLE_MIN),
+    GSCALAR(throttle_min,           "THR_MIN",          THROTTLE_MIN),
 
     // @Param: THR_MAX
     // @DisplayName: Maximum Throttle
@@ -265,7 +265,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-	GSCALAR(throttle_max,           "THR_MAX",          THROTTLE_MAX),
+    GSCALAR(throttle_max,           "THR_MAX",          THROTTLE_MAX),
 
     // @Param: CRUISE_THROTTLE
     // @DisplayName: Base throttle percentage in auto
@@ -274,7 +274,7 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-	GSCALAR(throttle_cruise,        "CRUISE_THROTTLE",    50),
+    GSCALAR(throttle_cruise,        "CRUISE_THROTTLE",    50),
 
     // @Param: THR_SLEWRATE
     // @DisplayName: Throttle slew rate
@@ -283,28 +283,28 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 100
     // @Increment: 1
     // @User: Standard
-	GSCALAR(throttle_slewrate,      "THR_SLEWRATE",     0),
+    GSCALAR(throttle_slewrate,      "THR_SLEWRATE",     0),
 
     // @Param: FS_ACTION
     // @DisplayName: Failsafe Action
     // @Description: What to do on a failsafe event
     // @Values: 0:Nothing,1:RTL,2:HOLD
     // @User: Standard
-	GSCALAR(fs_action,    "FS_ACTION",     2),
+    GSCALAR(fs_action,    "FS_ACTION",     2),
 
     // @Param: FS_TIMEOUT
     // @DisplayName: Failsafe timeout
     // @Description: How long a failsafe event need to happen for before we trigger the failsafe action
-	// @Units: seconds
+    // @Units: seconds
     // @User: Standard
-	GSCALAR(fs_timeout,    "FS_TIMEOUT",     5),
+    GSCALAR(fs_timeout,    "FS_TIMEOUT",     5),
 
     // @Param: FS_THR_ENABLE
     // @DisplayName: Throttle Failsafe Enable
     // @Description: The throttle failsafe allows you to configure a software failsafe activated by a setting on the throttle input channel to a low value. This can be used to detect the RC transmitter going out of range. Failsafe will be triggered when the throttle channel goes below the FS_THR_VALUE for FS_TIMEOUT seconds.
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-	GSCALAR(fs_throttle_enabled,    "FS_THR_ENABLE",     1),
+    GSCALAR(fs_throttle_enabled,    "FS_THR_ENABLE",     1),
 
     // @Param: FS_THR_VALUE
     // @DisplayName: Throttle Failsafe Value
@@ -312,71 +312,71 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 925 1100
     // @Increment: 1
     // @User: Standard
-	GSCALAR(fs_throttle_value,      "FS_THR_VALUE",     910),
+    GSCALAR(fs_throttle_value,      "FS_THR_VALUE",     910),
 
     // @Param: FS_GCS_ENABLE
     // @DisplayName: GCS failsafe enable
     // @Description: Enable ground control station telemetry failsafe. When enabled the Rover will execute the FS_ACTION when it fails to receive MAVLink heartbeat packets for FS_TIMEOUT seconds.
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-	GSCALAR(fs_gcs_enabled, "FS_GCS_ENABLE",   0),
+    GSCALAR(fs_gcs_enabled, "FS_GCS_ENABLE",   0),
 
     // @Param: LEARN_CH
     // @DisplayName: Learning channel
     // @Description: RC Channel to use for learning waypoints
     // @User: Advanced
-	GSCALAR(learn_channel,    "LEARN_CH",       7),
+    GSCALAR(learn_channel,    "LEARN_CH",       7),
 
     // @Param: MODE_CH
     // @DisplayName: Mode channel
     // @Description: RC Channel to use for driving mode control
     // @User: Advanced
-	GSCALAR(mode_channel,    "MODE_CH",       MODE_CHANNEL),
+    GSCALAR(mode_channel,    "MODE_CH",       MODE_CHANNEL),
 
     // @Param: MODE1
     // @DisplayName: Mode1
     // @Values: 0:Manual,2:LEARNING,3:STEERING,4:HOLD,10:Auto,11:RTL,15:Guided
     // @User: Standard
     // @Description: Driving mode for switch position 1 (910 to 1230 and above 2049)
-	GSCALAR(mode1,           "MODE1",         MODE_1),
+    GSCALAR(mode1,           "MODE1",         MODE_1),
 
     // @Param: MODE2
     // @DisplayName: Mode2
     // @Description: Driving mode for switch position 2 (1231 to 1360)
     // @Values: 0:Manual,2:LEARNING,3:STEERING,4:HOLD,10:Auto,11:RTL,15:Guided
     // @User: Standard
-	GSCALAR(mode2,           "MODE2",         MODE_2),
+    GSCALAR(mode2,           "MODE2",         MODE_2),
 
     // @Param: MODE3
     // @DisplayName: Mode3
     // @Description: Driving mode for switch position 3 (1361 to 1490)
     // @Values: 0:Manual,2:LEARNING,3:STEERING,4:HOLD,10:Auto,11:RTL,15:Guided
     // @User: Standard
-	GSCALAR(mode3,           "MODE3",         MODE_3),
+    GSCALAR(mode3,           "MODE3",         MODE_3),
 
     // @Param: MODE4
     // @DisplayName: Mode4
     // @Description: Driving mode for switch position 4 (1491 to 1620)
     // @Values: 0:Manual,2:LEARNING,3:STEERING,4:HOLD,10:Auto,11:RTL,15:Guided
     // @User: Standard
-	GSCALAR(mode4,           "MODE4",         MODE_4),
+    GSCALAR(mode4,           "MODE4",         MODE_4),
 
     // @Param: MODE5
     // @DisplayName: Mode5
     // @Description: Driving mode for switch position 5 (1621 to 1749)
     // @Values: 0:Manual,2:LEARNING,3:STEERING,4:HOLD,10:Auto,11:RTL,15:Guided
     // @User: Standard
-	GSCALAR(mode5,           "MODE5",         MODE_5),
+    GSCALAR(mode5,           "MODE5",         MODE_5),
 
     // @Param: MODE6
     // @DisplayName: Mode6
     // @Description: Driving mode for switch position 6 (1750 to 2049)
     // @Values: 0:Manual,2:LEARNING,3:STEERING,4:HOLD,10:Auto,11:RTL,15:Guided
     // @User: Standard
-	GSCALAR(mode6,           "MODE6",         MODE_6),
+    GSCALAR(mode6,           "MODE6",         MODE_6),
 
-	GSCALAR(command_total,          "CMD_TOTAL",        0),
-	GSCALAR(command_index,          "CMD_INDEX",        0),
+    GSCALAR(command_total,          "CMD_TOTAL",        0),
+    GSCALAR(command_index,          "CMD_INDEX",        0),
 
     // @Param: WP_RADIUS
     // @DisplayName: Waypoint radius
@@ -385,13 +385,13 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Range: 0 1000
     // @Increment: 0.1
     // @User: Standard
-	GSCALAR(waypoint_radius,        "WP_RADIUS",        2.0f),
+    GSCALAR(waypoint_radius,        "WP_RADIUS",        2.0f),
 
-	// variables not in the g class which contain EEPROM saved variables
+    // variables not in the g class which contain EEPROM saved variables
 
     // @Group: COMPASS_
     // @Path: ../libraries/AP_Compass/Compass.cpp
-	GOBJECT(compass,                "COMPASS_",	Compass),
+    GOBJECT(compass,                "COMPASS_", Compass),
 
     // @Group: SCHED_
     // @Path: ../libraries/AP_Scheduler/AP_Scheduler.cpp
@@ -405,8 +405,8 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Path: ../libraries/AP_RCMapper/AP_RCMapper.cpp
     GOBJECT(rcmap,                 "RCMAP_",         RCMapper),
 
-	GOBJECT(gcs0,					"SR0_",     GCS_MAVLINK),
-	GOBJECT(gcs3,					"SR3_",     GCS_MAVLINK),
+    GOBJECT(gcs0,                   "SR0_",     GCS_MAVLINK),
+    GOBJECT(gcs3,                   "SR3_",     GCS_MAVLINK),
 
     // @Group: INS_
     // @Path: ../libraries/AP_InertialSensor/AP_InertialSensor.cpp
@@ -422,27 +422,27 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Path: ../libraries/AP_AHRS/AP_AHRS.cpp
     GOBJECT(ahrs,                   "AHRS_",    AP_AHRS),
 
-	AP_VAREND
+    AP_VAREND
 };
 
 
 static void load_parameters(void)
 {
-	if (!g.format_version.load() ||
-	     g.format_version != Parameters::k_format_version) {
+    if (!g.format_version.load() ||
+         g.format_version != Parameters::k_format_version) {
 
-		// erase all parameters
-		cliSerial->printf_P(PSTR("Firmware change: erasing EEPROM...\n"));
-		AP_Param::erase_all();
+        // erase all parameters
+        cliSerial->printf_P(PSTR("Firmware change: erasing EEPROM...\n"));
+        AP_Param::erase_all();
 
-		// save the current format version
-		g.format_version.set_and_save(Parameters::k_format_version);
-		cliSerial->println_P(PSTR("done."));
+        // save the current format version
+        g.format_version.set_and_save(Parameters::k_format_version);
+        cliSerial->println_P(PSTR("done."));
     } else {
-	    unsigned long before = micros();
-	    // Load all auto-loaded EEPROM variables
-	    AP_Param::load_all();
+        unsigned long before = micros();
+        // Load all auto-loaded EEPROM variables
+        AP_Param::load_all();
 
-	    cliSerial->printf_P(PSTR("load_all took %luus\n"), micros() - before);
-	}
+        cliSerial->printf_P(PSTR("load_all took %luus\n"), micros() - before);
+    }
 }

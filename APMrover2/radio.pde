@@ -8,18 +8,18 @@ static void set_control_channels(void)
     channel_steer    = RC_Channel::rc_channel(rcmap.roll()-1);
     channel_throttle = RC_Channel::rc_channel(rcmap.throttle()-1);
 
-	// set rc channel ranges
-	channel_steer->set_angle(SERVO_MAX);
-	channel_throttle->set_angle(100);
+    // set rc channel ranges
+    channel_steer->set_angle(SERVO_MAX);
+    channel_throttle->set_angle(100);
 }
 
 static void init_rc_in()
 {
-	// set rc dead zones
-	channel_steer->set_default_dead_zone(30);
-	channel_throttle->set_default_dead_zone(30);
+    // set rc dead zones
+    channel_steer->set_default_dead_zone(30);
+    channel_throttle->set_default_dead_zone(30);
 
-	//set auxiliary ranges
+    //set auxiliary ranges
     update_aux();
 }
 
@@ -48,34 +48,34 @@ static void read_radio()
         RC_Channel::rc_channel(i)->set_pwm(RC_Channel::rc_channel(i)->read());
     }
 
-	control_failsafe(channel_throttle->radio_in);
+    control_failsafe(channel_throttle->radio_in);
 
-	channel_throttle->servo_out = channel_throttle->control_in;
+    channel_throttle->servo_out = channel_throttle->control_in;
 
 }
 
 static void control_failsafe(uint16_t pwm)
 {
-	if (!g.fs_throttle_enabled) {
+    if (!g.fs_throttle_enabled) {
         // no throttle failsafe
-		return;
+        return;
     }
 
-	// Check for failsafe condition based on loss of GCS control
-	if (rc_override_active) {
+    // Check for failsafe condition based on loss of GCS control
+    if (rc_override_active) {
         failsafe_trigger(FAILSAFE_EVENT_RC, (millis() - failsafe.rc_override_timer) > 1500);
-	} else if (g.fs_throttle_enabled) {
+    } else if (g.fs_throttle_enabled) {
         failsafe_trigger(FAILSAFE_EVENT_THROTTLE, pwm < (uint16_t)g.fs_throttle_value);
-	}
+    }
 }
 
 static void trim_control_surfaces()
 {
-	read_radio();
-	// Store control surface trim values
-	// ---------------------------------
+    read_radio();
+    // Store control surface trim values
+    // ---------------------------------
     if (channel_steer->radio_in > 1400) {
-		channel_steer->radio_trim = channel_steer->radio_in;
+        channel_steer->radio_trim = channel_steer->radio_in;
         // save to eeprom
         channel_steer->save_eeprom();
     }
@@ -83,8 +83,8 @@ static void trim_control_surfaces()
 
 static void trim_radio()
 {
-	for (int y = 0; y < 30; y++) {
-		read_radio();
-	}
+    for (int y = 0; y < 30; y++) {
+        read_radio();
+    }
     trim_control_surfaces();
 }

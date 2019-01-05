@@ -7,19 +7,19 @@
 
 // These are function definitions so the Menu can be constructed before the functions
 // are defined below. Order matters to the compiler.
-static int8_t	dump_log(uint8_t argc, 			const Menu::arg *argv);
-static int8_t	erase_logs(uint8_t argc, 		const Menu::arg *argv);
-static int8_t	select_logs(uint8_t argc, 		const Menu::arg *argv);
+static int8_t   dump_log(uint8_t argc,          const Menu::arg *argv);
+static int8_t   erase_logs(uint8_t argc,        const Menu::arg *argv);
+static int8_t   select_logs(uint8_t argc,       const Menu::arg *argv);
 
 // Creates a constant array of structs representing menu options
 // and stores them in Flash memory, not RAM.
 // User enters the string in the console to call the functions on the right.
 // See class Menu in AP_Coommon for implementation details
 static const struct Menu::command log_menu_commands[] PROGMEM = {
-	{"dump",	dump_log},
-	{"erase",	erase_logs},
-	{"enable",	select_logs},
-	{"disable",	select_logs}
+    {"dump",    dump_log},
+    {"erase",   erase_logs},
+    {"enable",  select_logs},
+    {"disable", select_logs}
 };
 
 // A Macro to create the Menu
@@ -28,34 +28,34 @@ MENU2(log_menu, "Log", log_menu_commands, print_log_menu);
 static bool
 print_log_menu(void)
 {
-	cliSerial->printf_P(PSTR("logs enabled: "));
+    cliSerial->printf_P(PSTR("logs enabled: "));
 
-	if (0 == g.log_bitmask) {
-		cliSerial->printf_P(PSTR("none"));
-	}else{
-		// Macro to make the following code a bit easier on the eye.
-		// Pass it the capitalised name of the log option, as defined
-		// in defines.h but without the LOG_ prefix.  It will check for
-		// the bit being set and print the name of the log option to suit.
-		#define PLOG(_s)	if (g.log_bitmask & MASK_LOG_ ## _s) cliSerial->printf_P(PSTR(" %S"), PSTR(#_s))
-		PLOG(ATTITUDE_FAST);
-		PLOG(ATTITUDE_MED);
-		PLOG(GPS);
-		PLOG(PM);
-		PLOG(CTUN);
-		PLOG(NTUN);
-		PLOG(MODE);
-		PLOG(IMU);
-		PLOG(CMD);
-		PLOG(CURRENT);
-		PLOG(COMPASS);
-		#undef PLOG
-	}
+    if (0 == g.log_bitmask) {
+        cliSerial->printf_P(PSTR("none"));
+    }else{
+        // Macro to make the following code a bit easier on the eye.
+        // Pass it the capitalised name of the log option, as defined
+        // in defines.h but without the LOG_ prefix.  It will check for
+        // the bit being set and print the name of the log option to suit.
+        #define PLOG(_s)    if (g.log_bitmask & MASK_LOG_ ## _s) cliSerial->printf_P(PSTR(" %S"), PSTR(#_s))
+        PLOG(ATTITUDE_FAST);
+        PLOG(ATTITUDE_MED);
+        PLOG(GPS);
+        PLOG(PM);
+        PLOG(CTUN);
+        PLOG(NTUN);
+        PLOG(MODE);
+        PLOG(IMU);
+        PLOG(CMD);
+        PLOG(CURRENT);
+        PLOG(COMPASS);
+        #undef PLOG
+    }
 
-	cliSerial->println();
+    cliSerial->println();
 
     DataFlash.ListAvailableLogs(cliSerial);
-	return(true);
+    return(true);
 }
 
 static int8_t
@@ -92,9 +92,9 @@ dump_log(uint8_t argc, const Menu::arg *argv)
 
 static void do_erase_logs(void)
 {
-	cliSerial->printf_P(PSTR("\nErasing log...\n"));
+    cliSerial->printf_P(PSTR("\nErasing log...\n"));
     DataFlash.EraseAll();
-	cliSerial->printf_P(PSTR("\nLog erased.\n"));
+    cliSerial->printf_P(PSTR("\nLog erased.\n"));
 }
 
 static int8_t
@@ -109,52 +109,52 @@ erase_logs(uint8_t argc, const Menu::arg *argv)
 static int8_t
 select_logs(uint8_t argc, const Menu::arg *argv)
 {
-	uint16_t	bits;
+    uint16_t    bits;
 
-	if (argc != 2) {
-		cliSerial->printf_P(PSTR("missing log type\n"));
-		return(-1);
-	}
+    if (argc != 2) {
+        cliSerial->printf_P(PSTR("missing log type\n"));
+        return(-1);
+    }
 
-	bits = 0;
+    bits = 0;
 
-	// Macro to make the following code a bit easier on the eye.
-	// Pass it the capitalised name of the log option, as defined
-	// in defines.h but without the LOG_ prefix.  It will check for
-	// that name as the argument to the command, and set the bit in
-	// bits accordingly.
-	//
-	if (!strcasecmp_P(argv[1].str, PSTR("all"))) {
-		bits = ~0;
-	} else {
-		#define TARG(_s)	if (!strcasecmp_P(argv[1].str, PSTR(#_s))) bits |= MASK_LOG_ ## _s
-		TARG(ATTITUDE_FAST);
-		TARG(ATTITUDE_MED);
-		TARG(GPS);
-		TARG(PM);
-		TARG(CTUN);
-		TARG(NTUN);
-		TARG(MODE);
-		TARG(IMU);
-		TARG(CMD);
-		TARG(CURRENT);
-		TARG(COMPASS);
-		#undef TARG
-	}
+    // Macro to make the following code a bit easier on the eye.
+    // Pass it the capitalised name of the log option, as defined
+    // in defines.h but without the LOG_ prefix.  It will check for
+    // that name as the argument to the command, and set the bit in
+    // bits accordingly.
+    //
+    if (!strcasecmp_P(argv[1].str, PSTR("all"))) {
+        bits = ~0;
+    } else {
+        #define TARG(_s)    if (!strcasecmp_P(argv[1].str, PSTR(#_s))) bits |= MASK_LOG_ ## _s
+        TARG(ATTITUDE_FAST);
+        TARG(ATTITUDE_MED);
+        TARG(GPS);
+        TARG(PM);
+        TARG(CTUN);
+        TARG(NTUN);
+        TARG(MODE);
+        TARG(IMU);
+        TARG(CMD);
+        TARG(CURRENT);
+        TARG(COMPASS);
+        #undef TARG
+    }
 
-	if (!strcasecmp_P(argv[0].str, PSTR("enable"))) {
-		g.log_bitmask.set_and_save(g.log_bitmask | bits);
-	}else{
-		g.log_bitmask.set_and_save(g.log_bitmask & ~bits);
-	}
-	return(0);
+    if (!strcasecmp_P(argv[0].str, PSTR("enable"))) {
+        g.log_bitmask.set_and_save(g.log_bitmask | bits);
+    }else{
+        g.log_bitmask.set_and_save(g.log_bitmask & ~bits);
+    }
+    return(0);
 }
 
 static int8_t
 process_logs(uint8_t argc, const Menu::arg *argv)
 {
-	log_menu.run();
-	return 0;
+    log_menu.run();
+    return 0;
 }
 
 struct PACKED log_Performance {
@@ -391,7 +391,7 @@ static void Log_Read(uint16_t log_num, uint16_t start_page, uint16_t end_page)
 
     cliSerial->println_P(PSTR(HAL_BOARD_NAME));
 
-	DataFlash.LogReadProcess(log_num, start_page, end_page, 
+    DataFlash.LogReadProcess(log_num, start_page, end_page, 
                              sizeof(log_structure)/sizeof(log_structure[0]),
                              log_structure, 
                              print_mode,

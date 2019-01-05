@@ -8,11 +8,11 @@
 
 #define TRUE 1
 #define FALSE 0
-#define ToRad(x) radians(x)	// *pi/180
-#define ToDeg(x) degrees(x)	// *180/pi
+#define ToRad(x) radians(x) // *pi/180
+#define ToDeg(x) degrees(x) // *180/pi
 
 #define DEBUG 0
-#define SERVO_MAX 4500	// This value represents 45 degrees and is just an arbitrary representation of servo max travel.
+#define SERVO_MAX 4500  // This value represents 45 degrees and is just an arbitrary representation of servo max travel.
 
 // active altitude sensor
 // ----------------------
@@ -29,26 +29,26 @@ enum ch7_option {
 #define T7 10000000
 
 // GPS type codes - use the names, not the numbers
-#define GPS_PROTOCOL_NONE	-1
-#define GPS_PROTOCOL_NMEA	0
-#define GPS_PROTOCOL_SIRF	1
-#define GPS_PROTOCOL_UBLOX	2
-#define GPS_PROTOCOL_IMU	3
-#define GPS_PROTOCOL_MTK	4
-#define GPS_PROTOCOL_HIL	5
-#define GPS_PROTOCOL_MTK19	6
-#define GPS_PROTOCOL_AUTO	7
+#define GPS_PROTOCOL_NONE   -1
+#define GPS_PROTOCOL_NMEA   0
+#define GPS_PROTOCOL_SIRF   1
+#define GPS_PROTOCOL_UBLOX  2
+#define GPS_PROTOCOL_IMU    3
+#define GPS_PROTOCOL_MTK    4
+#define GPS_PROTOCOL_HIL    5
+#define GPS_PROTOCOL_MTK19  6
+#define GPS_PROTOCOL_AUTO   7
 
 // HIL enumerations
-#define HIL_MODE_DISABLED			0
-#define HIL_MODE_ATTITUDE			1
-#define HIL_MODE_SENSORS			2
+#define HIL_MODE_DISABLED           0
+#define HIL_MODE_ATTITUDE           1
+#define HIL_MODE_SENSORS            2
 
 // Auto Pilot modes
 // ----------------
 enum mode {
     MANUAL=0,
-	LEARNING=2,
+    LEARNING=2,
     STEERING=3,
     HOLD=4,
     AUTO=10,
@@ -69,7 +69,7 @@ enum mode {
 
 // Command/Waypoint/Location Options Bitmask
 //--------------------
-#define MASK_OPTIONS_RELATIVE_ALT	(1<<0)		// 1 = Relative altitude
+#define MASK_OPTIONS_RELATIVE_ALT   (1<<0)      // 1 = Relative altitude
 
 //repeating events
 #define NO_REPEAT 0
@@ -113,35 +113,35 @@ enum ap_message {
 };
 
 //  Logging parameters
-#define LOG_CTUN_MSG	        0x01
-#define LOG_NTUN_MSG    		0x02
-#define LOG_PERFORMANCE_MSG		0x03
-#define LOG_CMD_MSG			    0x04
-#define LOG_CURRENT_MSG 		0x05
-#define LOG_STARTUP_MSG 		0x06
-#define LOG_SONAR_MSG 		    0x07
+#define LOG_CTUN_MSG            0x01
+#define LOG_NTUN_MSG            0x02
+#define LOG_PERFORMANCE_MSG     0x03
+#define LOG_CMD_MSG             0x04
+#define LOG_CURRENT_MSG         0x05
+#define LOG_STARTUP_MSG         0x06
+#define LOG_SONAR_MSG           0x07
 #define LOG_ATTITUDE_MSG        0x08
 #define LOG_MODE_MSG            0x09
 #define LOG_COMPASS_MSG         0x0A
 #define LOG_CAMERA_MSG          0x0B
 
-#define TYPE_AIRSTART_MSG		0x00
-#define TYPE_GROUNDSTART_MSG	0x01
-#define MAX_NUM_LOGS			100
+#define TYPE_AIRSTART_MSG       0x00
+#define TYPE_GROUNDSTART_MSG    0x01
+#define MAX_NUM_LOGS            100
 
-#define MASK_LOG_ATTITUDE_FAST 	(1<<0)
-#define MASK_LOG_ATTITUDE_MED 	(1<<1)
-#define MASK_LOG_GPS 			(1<<2)
-#define MASK_LOG_PM 			(1<<3)
-#define MASK_LOG_CTUN 			(1<<4)
-#define MASK_LOG_NTUN			(1<<5)
-#define MASK_LOG_MODE			(1<<6)
-#define MASK_LOG_IMU			(1<<7)
-#define MASK_LOG_CMD			(1<<8)
-#define MASK_LOG_CURRENT		(1<<9)
-#define MASK_LOG_SONAR   		(1<<10)
-#define MASK_LOG_COMPASS   		(1<<11)
-#define MASK_LOG_CAMERA   		(1<<12)
+#define MASK_LOG_ATTITUDE_FAST  (1<<0)
+#define MASK_LOG_ATTITUDE_MED   (1<<1)
+#define MASK_LOG_GPS            (1<<2)
+#define MASK_LOG_PM             (1<<3)
+#define MASK_LOG_CTUN           (1<<4)
+#define MASK_LOG_NTUN           (1<<5)
+#define MASK_LOG_MODE           (1<<6)
+#define MASK_LOG_IMU            (1<<7)
+#define MASK_LOG_CMD            (1<<8)
+#define MASK_LOG_CURRENT        (1<<9)
+#define MASK_LOG_SONAR          (1<<10)
+#define MASK_LOG_COMPASS        (1<<11)
+#define MASK_LOG_CAMERA         (1<<12)
 
 // Waypoint Modes
 // ----------------
@@ -162,7 +162,7 @@ enum ap_message {
 #define EVENT_LOOP 4
 
 // Climb rate calculations
-#define	ALTITUDE_HISTORY_LENGTH 8	//Number of (time,altitude) points to regress a climb rate from
+#define ALTITUDE_HISTORY_LENGTH 8   //Number of (time,altitude) points to regress a climb rate from
 
 
 #define BATTERY_VOLTAGE(x) (x->voltage_average()*g.volt_div_ratio)
@@ -175,14 +175,14 @@ enum ap_message {
 #define MAX_SONAR_XL 0
 #define MAX_SONAR_LV 1
 #define SonarToCm(x) (x*1.26)   // Sonar raw value to centimeters
-#define AN4			4
-#define AN5			5
+#define AN4         4
+#define AN5         5
 
-#define SPEEDFILT 400			// centimeters/second; the speed below which a groundstart will be triggered
+#define SPEEDFILT 400           // centimeters/second; the speed below which a groundstart will be triggered
 
 
 // EEPROM addresses
-#define EEPROM_MAX_ADDR		4096
+#define EEPROM_MAX_ADDR     4096
 // parameters get the first 1KiB of EEPROM, remainder is for waypoints
 #define WP_START_BYTE 0x500 // where in memory home WP is stored + all other WP
 #define WP_SIZE 15

@@ -565,7 +565,7 @@ static bool mavlink_try_send_message(mavlink_channel_t chan, enum ap_message id,
 
     case MSG_RETRY_DEFERRED:
         break; // just here to prevent a warning
-	}
+    }
     return true;
 }
 
@@ -649,14 +649,14 @@ void mavlink_send_text(mavlink_channel_t chan, gcs_severity severity, const char
 
 const AP_Param::GroupInfo GCS_MAVLINK::var_info[] PROGMEM = {
     AP_GROUPINFO("RAW_SENS", 0, GCS_MAVLINK, streamRateRawSensors,      0),
-	AP_GROUPINFO("EXT_STAT", 1, GCS_MAVLINK, streamRateExtendedStatus,  0),
+    AP_GROUPINFO("EXT_STAT", 1, GCS_MAVLINK, streamRateExtendedStatus,  0),
     AP_GROUPINFO("RC_CHAN",  2, GCS_MAVLINK, streamRateRCChannels,      0),
-	AP_GROUPINFO("RAW_CTRL", 3, GCS_MAVLINK, streamRateRawController,   0),
-	AP_GROUPINFO("POSITION", 4, GCS_MAVLINK, streamRatePosition,        0),
-	AP_GROUPINFO("EXTRA1",   5, GCS_MAVLINK, streamRateExtra1,          0),
-	AP_GROUPINFO("EXTRA2",   6, GCS_MAVLINK, streamRateExtra2,          0),
-	AP_GROUPINFO("EXTRA3",   7, GCS_MAVLINK, streamRateExtra3,          0),
-	AP_GROUPINFO("PARAMS",   8, GCS_MAVLINK, streamRateParams,          0),
+    AP_GROUPINFO("RAW_CTRL", 3, GCS_MAVLINK, streamRateRawController,   0),
+    AP_GROUPINFO("POSITION", 4, GCS_MAVLINK, streamRatePosition,        0),
+    AP_GROUPINFO("EXTRA1",   5, GCS_MAVLINK, streamRateExtra1,          0),
+    AP_GROUPINFO("EXTRA2",   6, GCS_MAVLINK, streamRateExtra2,          0),
+    AP_GROUPINFO("EXTRA3",   7, GCS_MAVLINK, streamRateExtra3,          0),
+    AP_GROUPINFO("PARAMS",   8, GCS_MAVLINK, streamRateParams,          0),
     AP_GROUPEND
 };
 
@@ -689,7 +689,7 @@ GCS_MAVLINK::update(void)
     // receive new packets
     mavlink_message_t msg;
     mavlink_status_t status;
-	status.packet_rx_drop_count = 0;
+    status.packet_rx_drop_count = 0;
 
     // process received bytes
     while (comm_get_available(chan))
@@ -881,17 +881,17 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             mavlink_request_data_stream_t packet;
             mavlink_msg_request_data_stream_decode(msg, &packet);
 
-			if (mavlink_check_target(packet.target_system, packet.target_component))
-				break;
+            if (mavlink_check_target(packet.target_system, packet.target_component))
+                break;
 
         int16_t freq = 0;     // packet frequency
 
-			if (packet.start_stop == 0)
-				freq = 0; // stop sending
-			else if (packet.start_stop == 1)
-				freq = packet.req_message_rate; // start sending
-			else
-				break;
+            if (packet.start_stop == 0)
+                freq = 0; // stop sending
+            else if (packet.start_stop == 1)
+                freq = packet.req_message_rate; // start sending
+            else
+                break;
 
             switch(packet.req_stream_id){
 
@@ -911,7 +911,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
                 streamRateRawSensors.set_and_save_ifchanged(freq);
             } else {
                 // We do not set and save this one so that if HIL is shut down incorrectly
-														// we will not continue to broadcast raw sensor data at 50Hz.
+                                                        // we will not continue to broadcast raw sensor data at 50Hz.
                 streamRateRawSensors = freq;
             }
                     break;
@@ -1038,7 +1038,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
 
 
     case MAVLINK_MSG_ID_SET_MODE:
-		{
+        {
             // decode
             mavlink_set_mode_t packet;
             mavlink_msg_set_mode_decode(msg, &packet);
@@ -1061,15 +1061,15 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             }
 
             break;
-		}
+        }
 
     case MAVLINK_MSG_ID_MISSION_REQUEST_LIST:
         {
             // decode
             mavlink_mission_request_list_t packet;
             mavlink_msg_mission_request_list_decode(msg, &packet);
-			if (mavlink_check_target(packet.target_system, packet.target_component))
-				break;
+            if (mavlink_check_target(packet.target_system, packet.target_component))
+                break;
 
             // Start sending waypoints
             mavlink_msg_mission_count_send(
@@ -1085,15 +1085,15 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         }
 
 
-	// XXX read a WP from EEPROM and send it to the GCS
+    // XXX read a WP from EEPROM and send it to the GCS
     case MAVLINK_MSG_ID_MISSION_REQUEST:
         {
             // decode
             mavlink_mission_request_t packet;
             mavlink_msg_mission_request_decode(msg, &packet);
 
- 			if (mavlink_check_target(packet.target_system, packet.target_component))
- 				break;
+            if (mavlink_check_target(packet.target_system, packet.target_component))
+                break;
 
             // send waypoint
             tell_command = get_cmd_with_index(packet.seq);
@@ -1101,7 +1101,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             // set frame of waypoint
             uint8_t frame;
 
-			if (tell_command.options & MASK_OPTIONS_RELATIVE_ALT) {
+            if (tell_command.options & MASK_OPTIONS_RELATIVE_ALT) {
                 frame = MAV_FRAME_GLOBAL_RELATIVE_ALT; // reference frame
             } else {
                 frame = MAV_FRAME_GLOBAL; // reference frame
@@ -1112,8 +1112,8 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         // time that the mav should loiter in milliseconds
             uint8_t current = 0; // 1 (true), 0 (false)
 
-			if (packet.seq == (uint16_t)g.command_index)
-            	current = 1;
+            if (packet.seq == (uint16_t)g.command_index)
+                current = 1;
 
             uint8_t autocontinue = 1; // 1 (true), 0 (false)
 
@@ -1126,57 +1126,57 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             z = tell_command.alt/1.0e2;
             }
 
-			switch (tell_command.id) {				// Switch to map APM command fields inot MAVLink command fields
+            switch (tell_command.id) {              // Switch to map APM command fields inot MAVLink command fields
 
-				case MAV_CMD_NAV_TAKEOFF:
-				case MAV_CMD_DO_SET_HOME:
-					param1 = tell_command.p1;
-					break;
+                case MAV_CMD_NAV_TAKEOFF:
+                case MAV_CMD_DO_SET_HOME:
+                    param1 = tell_command.p1;
+                    break;
 
-				case MAV_CMD_CONDITION_CHANGE_ALT:
-					x=0;	// Clear fields loaded above that we don't want sent for this command
-					y=0;
-				case MAV_CMD_CONDITION_DELAY:
-				case MAV_CMD_CONDITION_DISTANCE:
-					param1 = tell_command.lat;
-					break;
+                case MAV_CMD_CONDITION_CHANGE_ALT:
+                    x=0;    // Clear fields loaded above that we don't want sent for this command
+                    y=0;
+                case MAV_CMD_CONDITION_DELAY:
+                case MAV_CMD_CONDITION_DISTANCE:
+                    param1 = tell_command.lat;
+                    break;
 
-				case MAV_CMD_DO_JUMP:
-					param2 = tell_command.lat;
-					param1 = tell_command.p1;
-					break;
+                case MAV_CMD_DO_JUMP:
+                    param2 = tell_command.lat;
+                    param1 = tell_command.p1;
+                    break;
 
-				case MAV_CMD_DO_REPEAT_SERVO:
-					param4 = tell_command.lng;
-				case MAV_CMD_DO_REPEAT_RELAY:
-				case MAV_CMD_DO_CHANGE_SPEED:
-					param3 = tell_command.lat;
-					param2 = tell_command.alt;
-					param1 = tell_command.p1;
-					break;
+                case MAV_CMD_DO_REPEAT_SERVO:
+                    param4 = tell_command.lng;
+                case MAV_CMD_DO_REPEAT_RELAY:
+                case MAV_CMD_DO_CHANGE_SPEED:
+                    param3 = tell_command.lat;
+                    param2 = tell_command.alt;
+                    param1 = tell_command.p1;
+                    break;
 
-				case MAV_CMD_DO_SET_PARAMETER:
-				case MAV_CMD_DO_SET_RELAY:
-				case MAV_CMD_DO_SET_SERVO:
-					param2 = tell_command.alt;
-					param1 = tell_command.p1;
-					break;
-			}
+                case MAV_CMD_DO_SET_PARAMETER:
+                case MAV_CMD_DO_SET_RELAY:
+                case MAV_CMD_DO_SET_SERVO:
+                    param2 = tell_command.alt;
+                    param1 = tell_command.p1;
+                    break;
+            }
 
-			mavlink_msg_mission_item_send(chan,msg->sysid,
-										msg->compid,
-										packet.seq,
-										frame,
-										tell_command.id,
-										current,
-										autocontinue,
-										param1,
-										param2,
-										param3,
-										param4,
-										x,
-										y,
-										z);
+            mavlink_msg_mission_item_send(chan,msg->sysid,
+                                        msg->compid,
+                                        packet.seq,
+                                        frame,
+                                        tell_command.id,
+                                        current,
+                                        autocontinue,
+                                        param1,
+                                        param2,
+                                        param3,
+                                        param4,
+                                        x,
+                                        y,
+                                        z);
 
             // update last waypoint comm stamp
             waypoint_timelast_send = millis();
@@ -1252,7 +1252,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             // decode
             mavlink_mission_clear_all_t packet;
             mavlink_msg_mission_clear_all_decode(msg, &packet);
-			if (mavlink_check_target(packet.target_system, packet.target_component)) break;
+            if (mavlink_check_target(packet.target_system, packet.target_component)) break;
 
             // clear all commands
             g.command_total.set_and_save(0);
@@ -1333,7 +1333,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
     }
 #endif
 
-	// XXX receive a WP from GCS and store in EEPROM
+    // XXX receive a WP from GCS and store in EEPROM
     case MAVLINK_MSG_ID_MISSION_ITEM:
         {
             // decode
@@ -1346,55 +1346,55 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             // defaults
             tell_command.id = packet.command;
 
-			switch (packet.frame)
-			{
-				case MAV_FRAME_MISSION:
-				case MAV_FRAME_GLOBAL:
-					{
-						tell_command.lat = 1.0e7f*packet.x; // in as DD converted to * t7
-						tell_command.lng = 1.0e7f*packet.y; // in as DD converted to * t7
-						tell_command.alt = packet.z*1.0e2f; // in as m converted to cm
-						tell_command.options = 0; // absolute altitude
-						break;
-					}
+            switch (packet.frame)
+            {
+                case MAV_FRAME_MISSION:
+                case MAV_FRAME_GLOBAL:
+                    {
+                        tell_command.lat = 1.0e7f*packet.x; // in as DD converted to * t7
+                        tell_command.lng = 1.0e7f*packet.y; // in as DD converted to * t7
+                        tell_command.alt = packet.z*1.0e2f; // in as m converted to cm
+                        tell_command.options = 0; // absolute altitude
+                        break;
+                    }
 
 #ifdef MAV_FRAME_LOCAL_NED
-				case MAV_FRAME_LOCAL_NED: // local (relative to home position)
-					{
-						tell_command.lat = 1.0e7f*ToDeg(packet.x/
-						(radius_of_earth*cosf(ToRad(home.lat/1.0e7f)))) + home.lat;
-						tell_command.lng = 1.0e7f*ToDeg(packet.y/radius_of_earth) + home.lng;
-						tell_command.alt = -packet.z*1.0e2f;
-						tell_command.options = MASK_OPTIONS_RELATIVE_ALT;
-						break;
-					}
+                case MAV_FRAME_LOCAL_NED: // local (relative to home position)
+                    {
+                        tell_command.lat = 1.0e7f*ToDeg(packet.x/
+                        (radius_of_earth*cosf(ToRad(home.lat/1.0e7f)))) + home.lat;
+                        tell_command.lng = 1.0e7f*ToDeg(packet.y/radius_of_earth) + home.lng;
+                        tell_command.alt = -packet.z*1.0e2f;
+                        tell_command.options = MASK_OPTIONS_RELATIVE_ALT;
+                        break;
+                    }
 #endif
 
 #ifdef MAV_FRAME_LOCAL
-				case MAV_FRAME_LOCAL: // local (relative to home position)
-					{
-						tell_command.lat = 1.0e7f*ToDeg(packet.x/
-						(radius_of_earth*cosf(ToRad(home.lat/1.0e7f)))) + home.lat;
-						tell_command.lng = 1.0e7f*ToDeg(packet.y/radius_of_earth) + home.lng;
-						tell_command.alt = packet.z*1.0e2f;
-						tell_command.options = MASK_OPTIONS_RELATIVE_ALT;
-						break;
-					}
+                case MAV_FRAME_LOCAL: // local (relative to home position)
+                    {
+                        tell_command.lat = 1.0e7f*ToDeg(packet.x/
+                        (radius_of_earth*cosf(ToRad(home.lat/1.0e7f)))) + home.lat;
+                        tell_command.lng = 1.0e7f*ToDeg(packet.y/radius_of_earth) + home.lng;
+                        tell_command.alt = packet.z*1.0e2f;
+                        tell_command.options = MASK_OPTIONS_RELATIVE_ALT;
+                        break;
+                    }
 #endif
 
-				case MAV_FRAME_GLOBAL_RELATIVE_ALT: // absolute lat/lng, relative altitude
-					{
-						tell_command.lat = 1.0e7f * packet.x; // in as DD converted to * t7
-						tell_command.lng = 1.0e7f * packet.y; // in as DD converted to * t7
-						tell_command.alt = packet.z * 1.0e2f;
-						tell_command.options = MASK_OPTIONS_RELATIVE_ALT; // store altitude relative!! Always!!
-						break;
-					}
+                case MAV_FRAME_GLOBAL_RELATIVE_ALT: // absolute lat/lng, relative altitude
+                    {
+                        tell_command.lat = 1.0e7f * packet.x; // in as DD converted to * t7
+                        tell_command.lng = 1.0e7f * packet.y; // in as DD converted to * t7
+                        tell_command.alt = packet.z * 1.0e2f;
+                        tell_command.options = MASK_OPTIONS_RELATIVE_ALT; // store altitude relative!! Always!!
+                        break;
+                    }
 
             default:
                 result = MAV_MISSION_UNSUPPORTED_FRAME;
                 break;
-			}
+            }
 
             
             if (result != MAV_MISSION_ACCEPTED) goto mission_failed;
@@ -1467,8 +1467,8 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             mavlink_param_set_t packet;
             mavlink_msg_param_set_decode(msg, &packet);
 
-			if (mavlink_check_target(packet.target_system, packet.target_component))
-				break;
+            if (mavlink_check_target(packet.target_system, packet.target_component))
+                break;
 
             // set parameter
 
@@ -1485,7 +1485,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
                 // add a small amount before casting parameter values
                 // from float to integer to avoid truncating to the
                 // next lower integer value.
-				float rounding_addition = 0.01;
+                float rounding_addition = 0.01;
 
                 // handle variables with standard type IDs
                 if (var_type == AP_PARAM_FLOAT) {
@@ -1494,17 +1494,17 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
                     if (packet.param_value < 0) rounding_addition = -rounding_addition;
                     float v = packet.param_value+rounding_addition;
                     v = constrain_float(v, -2147483648.0f, 2147483647.0f);
-					((AP_Int32 *)vp)->set_and_save(v);
+                    ((AP_Int32 *)vp)->set_and_save(v);
                 } else if (var_type == AP_PARAM_INT16) {
                     if (packet.param_value < 0) rounding_addition = -rounding_addition;
                     float v = packet.param_value+rounding_addition;
                     v = constrain_float(v, -32768, 32767);
-					((AP_Int16 *)vp)->set_and_save(v);
+                    ((AP_Int16 *)vp)->set_and_save(v);
                 } else if (var_type == AP_PARAM_INT8) {
                     if (packet.param_value < 0) rounding_addition = -rounding_addition;
                     float v = packet.param_value+rounding_addition;
                     v = constrain_float(v, -128, 127);
-					((AP_Int8 *)vp)->set_and_save(v);
+                    ((AP_Int8 *)vp)->set_and_save(v);
                 } else {
                     // we don't support mavlink set on this parameter
                     break;
@@ -1559,28 +1559,28 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
     case MAVLINK_MSG_ID_HEARTBEAT:
         {
             // We keep track of the last time we received a heartbeat from our GCS for failsafe purposes
-			if(msg->sysid != g.sysid_my_gcs) break;
+            if(msg->sysid != g.sysid_my_gcs) break;
             last_heartbeat_ms = failsafe.rc_override_timer = millis();
             failsafe_trigger(FAILSAFE_EVENT_GCS, false);
-			pmTest1++;
+            pmTest1++;
             break;
         }
 
 #if HIL_MODE != HIL_MODE_DISABLED
-	case MAVLINK_MSG_ID_HIL_STATE:
-		{
-			mavlink_hil_state_t packet;
-			mavlink_msg_hil_state_decode(msg, &packet);
-			
-			float vel = pythagorous2(packet.vx, packet.vy);
+    case MAVLINK_MSG_ID_HIL_STATE:
+        {
+            mavlink_hil_state_t packet;
+            mavlink_msg_hil_state_decode(msg, &packet);
+            
+            float vel = pythagorous2(packet.vx, packet.vy);
             float cog = wrap_360_cd(ToDeg(atan2f(packet.vy, packet.vx)) * 100);
-			
+            
             // set gps hil sensor
             g_gps->setHIL(packet.time_usec/1000,
                           packet.lat*1.0e-7f, packet.lon*1.0e-7f, packet.alt*1.0e-3f,
                           vel*1.0e-2f, cog*1.0e-2f, 0, 10);
-			
-			// rad/sec
+            
+            // rad/sec
             Vector3f gyros;
             gyros.x = packet.rollspeed;
             gyros.y = packet.pitchspeed;
@@ -1597,7 +1597,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             ins.set_accel(accels);
             compass.setHIL(packet.roll, packet.pitch, packet.yaw);
             break;
-		}
+        }
 #endif // HIL_MODE
 
     case MAVLINK_MSG_ID_RADIO:
@@ -1784,7 +1784,7 @@ static void gcs_data_stream_send(void)
  */
 static void gcs_update(void)
 {
-	gcs0.update();
+    gcs0.update();
     if (gcs3.initialised) {
         gcs3.update();
     }
