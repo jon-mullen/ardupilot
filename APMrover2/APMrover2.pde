@@ -62,9 +62,7 @@ version 2.1 of the License, or (at your option) any later version.
 #include <RC_Channel.h>     // RC Channel Library
 #include <AP_RangeFinder.h> // Range finder library
 #include <Filter.h>         // Filter library
-#include <Butter.h>         // Filter library - butterworth filter
 #include <AP_Buffer.h>      // FIFO buffer library
-#include <ModeFilter.h>     // Mode Filter from Filter library
 #include <AP_Relay.h>       // APM relay
 #include <GCS_MAVLink.h>    // MAVLink GCS definitions
 #include <AP_Airspeed.h>    // needed for AHRS build
