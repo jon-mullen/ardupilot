@@ -123,7 +123,6 @@ static RCMapper rcmap;
 // primary control channels
 static RC_Channel *channel_steer;
 static RC_Channel *channel_throttle;
-static RC_Channel *channel_learn;
 
 ////////////////////////////////////////////////////////////////////////////////
 // prototypes
@@ -740,14 +739,34 @@ static void set_servos(void)
 
 static void set_servos_manual(void)
 {
+    // map steering RC
+    if(channel_steer->radio_in < STEER_LOW)
+    {
+        set_steering(-1);
+    }
+    else if(channel_steer->radio_in > STEER_HIGH)
+    {
+        set_steering(1);
+    }
+    else
+    {
+        set_steering(0);
+    }
 
-    // JTM_TODO
-    set_servos_safe();
+    // map throttle RC
+    if(channel_throttle->radio_in > THR_MIDDLE)
+    {
+        set_throttle(1);
+    }
+    else
+    {
+        set_throttle(0);
+    }
+
 }
 
 static void set_servos_auto(void)
 {
-
     // JTM_TODO
     set_servos_safe();
 }
@@ -755,7 +774,7 @@ static void set_servos_auto(void)
 static void set_servos_safe(void)
 {
     // JTM_TODO
-    set_steering(-1);
+    set_steering(0);
     set_throttle(0);
 }
 

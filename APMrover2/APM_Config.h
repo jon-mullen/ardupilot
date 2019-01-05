@@ -8,18 +8,31 @@
 
 #define MODE_1				HOLD
 #define MODE_2				HOLD
-#define MODE_3				HOLD
-#define MODE_4				HOLD
-#define MODE_5				HOLD
-#define MODE_6				HOLD
+#define MODE_3				MANUAL
+#define MODE_4				MANUAL
+#define MODE_5				AUTO
+#define MODE_6				AUTO
 
-#define RELAY_OPEN			1
-#define RELAY_CLOSED		0
+// steering constants
+#define STEER_MIN_PWM		1185
+#define STEER_MAX_PWM		1859
+
+#define STEER_LOW			STEER_MIN_PWM + 0.3333333 * (STEER_MAX_PWM - STEER_MIN_PWM)
+#define STEER_HIGH			STEER_MIN_PWM + 0.6666666 * (STEER_MAX_PWM - STEER_MIN_PWM)
 
 #define STEER_RELAY_1		1
 #define STEER_RELAY_2		2
 
-#define THROTTLE_RELAY_1	4
-#define THROTTLE_RELAY_2	5
-#define THROTTLE_RELAY_3	6
-#define THROTTLE_RELAY_4	7
+#define STEER_RELAY_OPEN	1
+#define STEER_RELAY_CLOSED	0
+
+// throttle constants
+#define THR_MIN_PWM			1126
+#define THR_MAX_PWM			1915
+#define THR_MIDDLE			(THR_MIN_PWM + THR_MAX_PWM) / 2
+
+#define THR_RELAY_1			4
+#define THR_RELAY_2			5
+
+#define THR_RELAY_OPEN		1
+#define THR_RELAY_CLOSED	0

@@ -549,31 +549,50 @@ static void set_steering(int8_t direction)
 
     if(direction == 0)
     {
-        set_digital_pin(STEER_RELAY_1, RELAY_OPEN);
-        set_digital_pin(STEER_RELAY_2, RELAY_OPEN);
+        set_digital_pin(STEER_RELAY_1, STEER_RELAY_OPEN);
+        set_digital_pin(STEER_RELAY_2, STEER_RELAY_OPEN);
     }
     else if(direction == 1)
     {
-        set_digital_pin(STEER_RELAY_1, RELAY_OPEN);
-        set_digital_pin(STEER_RELAY_2, RELAY_CLOSED);
+        set_digital_pin(STEER_RELAY_1, STEER_RELAY_OPEN);
+        set_digital_pin(STEER_RELAY_2, STEER_RELAY_CLOSED);
     }
     else if(direction == -1)
     {
-        set_digital_pin(STEER_RELAY_1, RELAY_CLOSED);
-        set_digital_pin(STEER_RELAY_2, RELAY_OPEN);
+        set_digital_pin(STEER_RELAY_1, STEER_RELAY_CLOSED);
+        set_digital_pin(STEER_RELAY_2, STEER_RELAY_OPEN);
     }
 }
 
 static void set_throttle(uint8_t level)
 {
-    // if(level > 0)
-    // {
-    //     set_digital_pin(4, 1);
-    // }
-    // else
-    // {
-    //     set_digital_pin(4, 0);
-    // }
+    if(level == 0)
+    {
+        set_digital_pin(THR_RELAY_1, THR_RELAY_OPEN);
+        set_digital_pin(THR_RELAY_2, THR_RELAY_OPEN);
+    }
+    else if(level == 1)
+    {
+        set_digital_pin(THR_RELAY_1, THR_RELAY_OPEN);
+        set_digital_pin(THR_RELAY_2, THR_RELAY_CLOSED);
+    }
+    else if(level == 2)
+    {
+        set_digital_pin(THR_RELAY_1, THR_RELAY_CLOSED);
+        set_digital_pin(THR_RELAY_2, THR_RELAY_OPEN);
+
+    }
+    else if(level == 3)
+    {
+        set_digital_pin(THR_RELAY_1, THR_RELAY_CLOSED);
+        set_digital_pin(THR_RELAY_2, THR_RELAY_CLOSED);
+    }
+    else
+    {
+        set_digital_pin(THR_RELAY_1, THR_RELAY_OPEN);
+        set_digital_pin(THR_RELAY_2, THR_RELAY_OPEN);
+    }
+    
 }
 
 
